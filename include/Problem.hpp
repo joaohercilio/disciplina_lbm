@@ -1,0 +1,42 @@
+#pragma once
+
+#include <memory>
+#include <cmath>
+#include <iostream>
+
+#include "lattice/D2Q5.hpp"
+#include "lattice/D2Q9.hpp"
+#include "collision/BGK.hpp"
+#include "Geometry.hpp"
+#include "Streaming.hpp"
+#include "Output.hpp"
+
+class Problem {
+
+protected:
+    std::unique_ptr<LatticeModel> lattice_;
+    std::unique_ptr<CollisionModel> collision_;
+    Geometry geometry_;
+    Streaming streaming_;
+    std::vector<double> f1_;
+    std::vector<double> f2_;
+
+public:
+    Problem(std::unique_ptr<LatticeModel> lattice, std::unique_ptr<CollisionModel> collision, const Geometry& geometry, const Streaming& streaming)
+        : lattice_(std::move(lattice)),
+          collision_(std::move(collision)),
+          geometry_(geometry),
+          streaming_(streaming),
+          f1_(geometry_.getNumOfPoints() * lattice_->getNumOfVel(), 0.0),
+          f2_(geometry_.getNumOfPoints() * lattice_->getNumOfVel(), 0.0) {}
+
+    virtual ~Problem() = default;
+
+    virtual void initialize() = 0;
+    virtual void run() = 0;
+
+    const LatticeModel& getLattice() const;
+    const Geometry&     getGeometry() const;
+
+    static std::unique_ptr<Problem> create();
+};
