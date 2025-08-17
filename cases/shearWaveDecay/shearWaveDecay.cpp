@@ -34,20 +34,17 @@ namespace user {
     const int maxSteps = ceil(finalSymTime);
     const double Ma = U_latt / (1.0 / std::sqrt(3));
 
+    double vx (int x) {
+        return U_latt * std::sin(2.0*M_PI/N * (x+0.5));
+    }
+
+    // Initial conditions
     std::vector<double> initialVelocity(int x, int y, int z) {
-        return {U_latt * std::sin(2.0*M_PI/N * (x+0.5)), 0, 0};
+        return {0, vx(x), 0};
     }
 
     double initialDensity (int x, int y, int z) {
         return rho0;
-    }
-
-    int totalSteps () {
-        return maxSteps;
-    }
-
-    int writeInterval() {
-        return 1;
     }
 
     // Geometry definition
@@ -55,6 +52,16 @@ namespace user {
         Geometry geo(N, 1, 1);
         // geo.setSolid(0, 0, 0);
         return geo;
+    }
+
+    // Total number of time steps
+    int totalSteps () {
+        return maxSteps;
+    }
+
+    // Output options
+    int writeInterval() {
+        return 1;
     }
 }
 
