@@ -11,10 +11,8 @@ Makefile
 *.swp
 
 .vscode/
-.idea/
-
-*.dSYM/
 
 output/
 *.tsv
-*.txt
+
+!CMakeLists.txt
