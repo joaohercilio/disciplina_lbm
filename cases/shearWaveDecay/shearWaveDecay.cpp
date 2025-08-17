@@ -3,22 +3,20 @@
 // ----- PROBLEM SETUP (the user should edit this namespace) ----- //
 
 namespace user {
-
-    using Lattice = D2Q9; 
-    using Collision = BGK;
+    
     Streaming streaming;
 
-    // Collision operator parameters
-    const double tau = 0.8;
-    const double omega = 1.0/tau;
-    CollisionParameters makeParams() {
-        CollisionParameters params;
-        params.alphaEq = omega;
-        params.alphaNonEq = 1.0 - omega;
-        return params;
-    }
+    // Choose Lattice Model
+    using LatticeModel = D2Q9; 
 
-    // Problem setup
+    // Choose Collision Model and set collision parameters
+    using CollisionModel = BGK;
+    double tau = 0.8;
+    inline ColParamMap colParams() {
+        return {{"tau", tau}};
+    }
+    
+    // Problem variables and functions
     const int N = 8;
     const double rho0 = 1.0;
     const double nu = 1.0/3.0 * (tau - 0.5);
@@ -34,13 +32,13 @@ namespace user {
     const int maxSteps = ceil(finalSymTime);
     const double Ma = U_latt / (1.0 / std::sqrt(3));
 
-    double vx (int x) {
+    double vy (int x) {
         return U_latt * std::sin(2.0*M_PI/N * (x+0.5));
     }
 
     // Initial conditions
     std::vector<double> initialVelocity(int x, int y, int z) {
-        return {0, vx(x), 0};
+        return {0, vy(x), 0};
     }
 
     double initialDensity (int x, int y, int z) {
@@ -69,8 +67,8 @@ class Case : public Problem {
 
 public:
     Case() : Problem(
-            std::make_unique<user::Lattice>(), 
-            std::make_unique<user::Collision>(),
+            std::make_unique<user::LatticeModel>(), 
+            std::make_unique<user::CollisionModel>(),
             user::problemGeometry(),
             user::streaming
         ) {}
@@ -108,7 +106,7 @@ public:
     {
         initialize();
 
-        CollisionParameters params = user::makeParams();
+        const auto colParams = collision_ -> prepareColParams(user::colParams());
 
         std::vector<double>* f_in  = &f1_;
         std::vector<double>* f_out = &f2_;
@@ -117,7 +115,7 @@ public:
 
         for (int t = 0; t < user::totalSteps(); ++t) {
 
-            collision_->computeCollision(*f_in, params, *lattice_, geometry_);
+            collision_->computeCollision(*f_in, *lattice_, geometry_, colParams);
 
             streaming_.performStreaming(*f_in, *f_out, *lattice_, geometry_);
 

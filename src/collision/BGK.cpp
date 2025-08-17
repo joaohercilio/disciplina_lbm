@@ -1,6 +1,30 @@
 #include "collision/BGK.hpp"
 
-void BGK::computeCollision(std::vector<double>& f, const CollisionParameters& colParams, const LatticeModel& lattice, const Geometry& geometry) const {
+ColParamMap BGK::prepareColParams(const ColParamMap& raw) const {
+    auto it = raw.find("tau");
+    if (it == raw.end()) throw std::invalid_argument("BGK requires 'tau'");
+    double tau = it->second;
+    if (tau <= 0.0) throw std::invalid_argument("tau must be > 0");
+
+    const double alphaEq = 1.0 / tau;
+    const double alphaNonEq = 1.0 - alphaEq;
+    
+    ColParamMap out = raw;
+    out["alphaEq"] = alphaEq;
+    out["alphaNonEq"] = alphaNonEq;
+    return out;
+}
+
+void BGK::computeCollision(std::vector<double>& f,
+                           const LatticeModel& lattice,
+                           const Geometry& geometry,
+                           const ColParamMap& colParams)
+{
+    auto ia = colParams.find("alphaEq");
+    auto ib = colParams.find("alphaNonEq");
+
+    const double alphaEq = ia -> second;
+    const double alphaNonEq = ib -> second;
 
     int numOfVel = lattice.getNumOfVel();
     int numPoints = geometry.getNumOfPoints();
@@ -20,7 +44,7 @@ void BGK::computeCollision(std::vector<double>& f, const CollisionParameters& co
 
             for (int k = 0; k < numOfVel; k++) 
             {
-                mapF[k] = colParams.alphaNonEq * mapF[k] + colParams.alphaEq * feq[k];
+                mapF[k] = alphaNonEq * mapF[k] + alphaEq * feq[k];
             }
         }
     }
