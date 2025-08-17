@@ -20,7 +20,7 @@ void BGK::computeCollision(std::vector<double>& f, const CollisionParameters& co
 
             for (int k = 0; k < numOfVel; k++) 
             {
-                mapF[k] = colParams.alphaEq * mapF[k] + colParams.alphaNonEq * feq[k];
+                mapF[k] = colParams.alphaNonEq * mapF[k] + colParams.alphaEq * feq[k];
             }
         }
     }
