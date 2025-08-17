@@ -27,8 +27,6 @@ set(COMMON_SRC
     ${LBM_PROJECT_ROOT}/src/Output.cpp
 )
 
-file(GLOB PROBLEM_SRC "${CMAKE_CURRENT_LIST_DIR}/*.cpp")
-
-add_executable(shearWaveDecay ${COMMON_SRC} ${PROBLEM_SRC})
+add_executable(shearWaveDecay ${COMMON_SRC})
 
 target_include_directories(shearWaveDecay PRIVATE ${CMAKE_CURRENT_LIST_DIR})
