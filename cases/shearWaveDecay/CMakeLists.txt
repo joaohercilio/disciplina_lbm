@@ -14,9 +14,11 @@ endif()
 get_filename_component(LBM_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE)
 
 include_directories(${LBM_PROJECT_ROOT}/include)
+include_directories(${LBM_PROJECT_ROOT})
 
 set(COMMON_SRC
     ${LBM_PROJECT_ROOT}/src/main.cpp
+    ${LBM_PROJECT_ROOT}/src/LBMDriver.cpp
     ${LBM_PROJECT_ROOT}/src/lattice/D2Q9.cpp
     ${LBM_PROJECT_ROOT}/src/lattice/D2Q5.cpp
     ${LBM_PROJECT_ROOT}/src/collision/BGK.cpp
@@ -28,3 +30,5 @@ set(COMMON_SRC
 file(GLOB PROBLEM_SRC "${CMAKE_CURRENT_LIST_DIR}/*.cpp")
 
 add_executable(shearWaveDecay ${COMMON_SRC} ${PROBLEM_SRC})
+
+target_include_directories(shearWaveDecay PRIVATE ${CMAKE_CURRENT_LIST_DIR})

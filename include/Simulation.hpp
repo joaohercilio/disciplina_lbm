@@ -6,12 +6,14 @@
 
 #include "lattice/D2Q5.hpp"
 #include "lattice/D2Q9.hpp"
+
 #include "collision/BGK.hpp"
+
 #include "Geometry.hpp"
 #include "Streaming.hpp"
 #include "Output.hpp"
 
-class Problem {
+class Simulation {
 
 protected:
     std::unique_ptr<LatticeModel> lattice_;
@@ -22,7 +24,7 @@ protected:
     std::vector<double> f2_;
 
 public:
-    Problem(std::unique_ptr<LatticeModel> lattice, std::unique_ptr<CollisionModel> collision, const Geometry& geometry, const Streaming& streaming)
+    Simulation(std::unique_ptr<LatticeModel> lattice, std::unique_ptr<CollisionModel> collision, const Geometry& geometry, const Streaming& streaming)
         : lattice_(std::move(lattice)),
           collision_(std::move(collision)),
           geometry_(geometry),
@@ -30,7 +32,7 @@ public:
           f1_(geometry_.getNumOfPoints() * lattice_->getNumOfVel(), 0.0),
           f2_(geometry_.getNumOfPoints() * lattice_->getNumOfVel(), 0.0) {}
 
-    virtual ~Problem() = default;
+    virtual ~Simulation() = default;
 
     virtual void initialize() = 0;
     virtual void run() = 0;
@@ -38,5 +40,5 @@ public:
     const LatticeModel& getLattice() const;
     const Geometry&     getGeometry() const;
 
-    static std::unique_ptr<Problem> create();
+    static std::unique_ptr<Simulation> create();
 };
