@@ -66,7 +66,7 @@ public:
                 }
             }
             
-            if (t % user::writeInterval() == 0) writeTSV(*f_out, *lattice_, geometry_, "../output", t+1);
+            if ( (t+1) % user::writeInterval() == 0) writeTSV(*f_out, *lattice_, geometry_, "../output", t+1);
 
             std::swap(f_in, f_out);
         }

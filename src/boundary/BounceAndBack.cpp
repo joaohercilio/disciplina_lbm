@@ -1,5 +1,4 @@
 #include "boundary/BounceAndBack.hpp"
-#include <iostream>
 
 void BounceAndBack::applyBoundary(std::vector<double>& f, 
                                     const LatticeModel& lattice, 
