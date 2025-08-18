@@ -15,9 +15,12 @@ namespace user {
     ColParamMap colParams() {
         return {{"tau", tau}};
     }
-    
+
     // Initial conditions
-    std::vector<double> initialVelocity(int x, int y, int z);
+    std::vector<double> initialVelocity(int x, int y, int z)
+    {
+        return {0.0, 0.0, 0.0}; 
+    }
 
     double initialDensity (int x, int y, int z) {
         return 1.0; // Uniform density
@@ -32,8 +35,9 @@ namespace user {
     // Geometry definition and boundary conditions
     using BoundaryModel = BounceAndBack;
     Geometry problemGeometry() {
-        Geometry geo(10, 10, 10);
+        Geometry geo(1, 8, 1);
         //geo.setSolid(0, 0, 0);
+        //geo.setSolid(0, 7, 0);
 
         // Boundary conditions
         geo.setBoundaryType(0, 0, 0, BoundaryType::BounceAndBackSouth);
@@ -49,6 +53,6 @@ namespace user {
 
     // Output options
     int writeInterval() {
-        return 2; // Write output every 2 steps
+        return 1; // Write output every 2 steps
     }
 }

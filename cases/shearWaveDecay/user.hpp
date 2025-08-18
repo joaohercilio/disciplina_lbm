@@ -46,12 +46,20 @@ namespace user {
     }
 
     // Geometry definition
+    using BoundaryModel = BounceAndBack;
     Geometry problemGeometry() {
         Geometry geo(N, 1, 1);
         // geo.setSolid(0, 0, 0);
+        
         return geo;
     }
 
+    // External forces
+    std::vector<double> externalForce()
+    {
+        return {0.0, 0.0, 0.0};
+    }
+    
     // Total number of time steps
     int totalSteps () {
         return maxSteps;

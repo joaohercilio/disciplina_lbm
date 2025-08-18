@@ -15,7 +15,7 @@ void Streaming::performStreaming(std::vector<double>& f, std::vector<double>& fn
     for (int x = 0; x < nx; x++) {
         for (int y = 0; y < ny; y++) {
             for (int z = 0; z < nz; z++) {
-                if (geometry.getNode(x,y,z) == NodeType::Fluid) {
+                //if (geometry.getNode(x,y,z) == NodeType::Fluid) {
                     
                     for (int k = 0; k < numOfVel; k++) {
                         int xn = (x + cx[k] + nx) % nx;
@@ -27,8 +27,8 @@ void Streaming::performStreaming(std::vector<double>& f, std::vector<double>& fn
 
                         fn[idxn * numOfVel + k] = f[idx * numOfVel + k];
                     }
-                    
-                }
+              
+                //}
             }
         }
     }

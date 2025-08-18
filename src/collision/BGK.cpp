@@ -18,19 +18,18 @@ ColParamMap BGK::prepareColParams(const ColParamMap& raw) const {
 void BGK::computeCollision(std::vector<double>& f,
                            const LatticeModel& lattice,
                            const Geometry& geometry,
-                           const ColParamMap& colParams)
+                           const ColParamMap& colParams,
+                           const std::vector<double>& force)
 {
-    auto ia = colParams.find("alphaEq");
-    auto ib = colParams.find("alphaNonEq");
-
-    const double alphaEq = ia -> second;
-    const double alphaNonEq = ib -> second;
+    const double alphaEq    = colParams.find("alphaEq") -> second;
+    const double alphaNonEq = colParams.find("alphaNonEq") -> second;
+    const double tau        = colParams.find("tau") -> second;
 
     int numOfVel = lattice.getNumOfVel();
     int numPoints = geometry.getNumOfPoints();
 
     for (int i = 0; i < numPoints; ++i) {
-        if (geometry.getNode(i) == NodeType::Fluid) {
+        //if (geometry.getNode(i) == NodeType::Fluid) {
 
             double* mapF = f.data() + i*numOfVel;
 
@@ -40,12 +39,16 @@ void BGK::computeCollision(std::vector<double>& f,
 
             double feq[numOfVel];
 
-            lattice.computeEquilibrium(feq, rho, vx, vy, vz);
+            vx += tau*force[0] / rho;
+            vy += tau*force[1] / rho;
+            vz += tau*force[2] / rho;
+
+            lattice.computeEquilibrium( feq, rho, vx, vy, vz );
 
             for (int k = 0; k < numOfVel; k++) 
             {
                 mapF[k] = alphaNonEq * mapF[k] + alphaEq * feq[k];
             }
-        }
+        //}
     }
 }

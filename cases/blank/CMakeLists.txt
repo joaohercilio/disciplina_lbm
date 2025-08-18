@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(blankCase CXX)
+project(blank CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -11,22 +11,19 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 
-get_filename_component(LBM_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
-include_directories(${LBM_PROJECT_ROOT}/include)
-include_directories(${LBM_PROJECT_ROOT})
-
-set(COMMON_SRC
-    ${LBM_PROJECT_ROOT}/src/main.cpp
-    ${LBM_PROJECT_ROOT}/src/LBMDriver.cpp
-    ${LBM_PROJECT_ROOT}/src/lattice/D2Q9.cpp
-    ${LBM_PROJECT_ROOT}/src/lattice/D2Q5.cpp
-    ${LBM_PROJECT_ROOT}/src/collision/BGK.cpp
-    ${LBM_PROJECT_ROOT}/src/Geometry.cpp
-    ${LBM_PROJECT_ROOT}/src/Streaming.cpp
-    ${LBM_PROJECT_ROOT}/src/Output.cpp
+set(SRC
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/LBMDriver.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/lattice/D2Q9.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/lattice/D2Q5.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/collision/BGK.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/boundary/BounceAndBack.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Geometry.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Streaming.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Output.cpp
 )
 
-add_executable(blankCase ${COMMON_SRC})
-
-target_include_directories(blankCase PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+add_executable(blank ${SRC})

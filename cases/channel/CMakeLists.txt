@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(shearWaveDecay CXX)
+project(channel CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -26,4 +26,4 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Output.cpp
 )
 
-add_executable(shearWaveDecay ${SRC})
+add_executable(channel ${SRC})

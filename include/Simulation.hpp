@@ -9,6 +9,8 @@
 
 #include "collision/BGK.hpp"
 
+#include "boundary/BounceAndBack.hpp"
+
 #include "Geometry.hpp"
 #include "Streaming.hpp"
 #include "Output.hpp"
@@ -19,15 +21,17 @@ protected:
     std::unique_ptr<LatticeModel> lattice_;
     std::unique_ptr<CollisionModel> collision_;
     Geometry geometry_;
+    std::unique_ptr<BoundaryModel> boundary_;
     Streaming streaming_;
     std::vector<double> f1_;
     std::vector<double> f2_;
 
 public:
-    Simulation(std::unique_ptr<LatticeModel> lattice, std::unique_ptr<CollisionModel> collision, const Geometry& geometry, const Streaming& streaming)
+    Simulation(std::unique_ptr<LatticeModel> lattice, std::unique_ptr<CollisionModel> collision, const Geometry& geometry, std::unique_ptr<BoundaryModel> boundary, const Streaming& streaming)
         : lattice_(std::move(lattice)),
           collision_(std::move(collision)),
           geometry_(geometry),
+          boundary_(std::move(boundary)),
           streaming_(streaming),
           f1_(geometry_.getNumOfPoints() * lattice_->getNumOfVel(), 0.0),
           f2_(geometry_.getNumOfPoints() * lattice_->getNumOfVel(), 0.0) {}

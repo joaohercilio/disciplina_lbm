@@ -6,6 +6,7 @@ public:
             std::make_unique<user::LatticeModel>(), 
             std::make_unique<user::CollisionModel>(),
             user::problemGeometry(),
+            std::make_unique<user::BoundaryModel>(),
             user::streaming
         ) {}
 
@@ -19,7 +20,7 @@ public:
         for (int z = 0; z < nz; ++z) {
             for (int y = 0; y < ny; ++y) {
                 for (int x = 0; x < nx; ++x) {
-                    if (geometry_.getNode(x, y, z) == NodeType::Fluid) {
+                    //if (geometry_.getNode(x, y, z) == NodeType::Fluid) {
 
                         std::vector<double> u = user::initialVelocity(x, y, z);
 
@@ -32,7 +33,7 @@ public:
                         for (int k = 0; k < numOfVel; ++k) {
                             f1_[idx + k] = feq[k];
                         }
-                    }
+                    //}
                 }
             }
         }
@@ -51,17 +52,27 @@ public:
 
         for (int t = 0; t < user::totalSteps(); ++t) {
 
-            collision_->computeCollision(*f_in, *lattice_, geometry_, colParams);
+            collision_->computeCollision(*f_in, *lattice_, geometry_, colParams, user::externalForce());
 
             streaming_.performStreaming(*f_in, *f_out, *lattice_, geometry_);
 
+            for (int z = 0; z < geometry_.nz(); ++z) {
+                for (int y = 0; y < geometry_.ny(); ++y) {
+                    for (int x = 0; x < geometry_.nx(); ++x) {
+                        if (geometry_.getBoundaryType(x, y, z) != BoundaryType::None) {
+                            boundary_->applyBoundary(*f_out, *lattice_, geometry_, x, y, z);
+                        }
+                    }
+                }
+            }
+            
             if (t % user::writeInterval() == 0) writeTSV(*f_out, *lattice_, geometry_, "../output", t+1);
 
             std::swap(f_in, f_out);
         }
 
         // Guarantee that the final distribution is in f1_
-        if (user::maxSteps % 2 != 0) {
+        if (user::totalSteps() % 2 != 0) {
             f1_ = f2_;
         }
 
