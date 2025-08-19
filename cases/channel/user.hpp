@@ -1,5 +1,7 @@
 #include "Simulation.hpp"
 
+#include <iostream>
+
 // ----- PROBLEM SETUP (the user should edit this namespace) ----- //
 
 namespace user {
@@ -16,6 +18,18 @@ namespace user {
         return {{"tau", tau}};
     }
 
+    const int N = 8;
+    const double nu_latt = 1.0/3.0 * (tau - 0.5);
+    const double nu_phy = 0.001;
+    const double L = 1.0;
+    const double gx = 1.0;
+    const double Umax = L*L*gx / (8.0 * nu_phy);
+    const double ReMax = L*Umax / nu_phy; 
+
+    inline void print() {
+        std::cout << "Re_max = " << ReMax << std::endl;
+    }
+
     // Initial conditions
     std::vector<double> initialVelocity(int x, int y, int z)
     {
@@ -29,7 +43,7 @@ namespace user {
     // External forces
     std::vector<double> externalForce()
     {
-        return {0.1, 0.0, 0.0};
+        return {gx, 0.0, 0.0};
     }
 
     // Geometry definition and boundary conditions
@@ -48,11 +62,11 @@ namespace user {
 
     // Total number of time steps
     int totalSteps () {
-        return 10;
+        return 100000;
     }
 
     // Output options
     int writeInterval() {
-        return 1; // Write output every 2 steps
+        return 100000; 
     }
 }

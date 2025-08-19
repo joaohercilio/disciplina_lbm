@@ -41,6 +41,8 @@ public:
 
     void run() override 
     {
+        user::print();
+        
         initialize();
 
         const auto colParams = collision_ -> prepareColParams(user::colParams());
