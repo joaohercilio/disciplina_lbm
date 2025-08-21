@@ -9,7 +9,7 @@
 
 #include "collision/BGK.hpp"
 
-#include "boundary/BounceAndBack.hpp"
+#include "boundary/HalfwayBounceAndBack.hpp"
 
 #include "Geometry.hpp"
 #include "Streaming.hpp"

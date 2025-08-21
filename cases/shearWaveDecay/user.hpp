@@ -46,7 +46,7 @@ namespace user {
     }
 
     // Geometry definition
-    using BoundaryModel = BounceAndBack;
+    using BoundaryModel = HalfwayBounceAndBack;
     Geometry problemGeometry() {
         Geometry geo(N, 1, 1);
         // geo.setSolid(0, 0, 0);
@@ -60,6 +60,10 @@ namespace user {
         return {0.0, 0.0, 0.0};
     }
     
+    void print() {
+        
+    }
+
     // Total number of time steps
     int totalSteps () {
         return maxSteps;

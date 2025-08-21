@@ -1,7 +1,7 @@
 #include "BoundaryModel.hpp"
 #include "Geometry.hpp"
 
-class BounceAndBack : public BoundaryModel {
+class HalfwayBounceAndBack : public BoundaryModel {
 
 public:
 

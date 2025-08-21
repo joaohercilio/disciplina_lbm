@@ -8,8 +8,8 @@ class Geometry;
 enum class BoundaryType
 { 
     None,
-    BounceAndBackSouth,
-    BounceAndBackNorth 
+    HalfwayBounceAndBackSouth,
+    HalfwayBounceAndBackNorth 
 };
 
 class BoundaryModel {

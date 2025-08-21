@@ -29,7 +29,7 @@ void BGK::computeCollision(std::vector<double>& f,
     int numPoints = geometry.getNumOfPoints();
 
     for (int i = 0; i < numPoints; ++i) {
-        //if (geometry.getNode(i) == NodeType::Fluid) {
+        if (geometry.getNode(i) == NodeType::Fluid) {
 
             double* mapF = f.data() + i*numOfVel;
 
@@ -49,6 +49,6 @@ void BGK::computeCollision(std::vector<double>& f,
             {
                 mapF[k] = alphaNonEq * mapF[k] + alphaEq * feq[k];
             }
-        //}
+        }
     }
 }

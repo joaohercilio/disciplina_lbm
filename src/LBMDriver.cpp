@@ -20,7 +20,7 @@ public:
         for (int z = 0; z < nz; ++z) {
             for (int y = 0; y < ny; ++y) {
                 for (int x = 0; x < nx; ++x) {
-                    //if (geometry_.getNode(x, y, z) == NodeType::Fluid) {
+                    if (geometry_.getNode(x, y, z) == NodeType::Fluid) {
 
                         std::vector<double> u = user::initialVelocity(x, y, z);
 
@@ -29,11 +29,22 @@ public:
                         std::vector<double> feq(numOfVel, 0.0);
                         lattice_->computeEquilibrium(feq.data(), rho, u[0], u[1], u[2]); 
 
-                        int idx = (z * ny * nx + y * nx + x) * numOfVel;
+                        int idx = geometry_.getIndex(x, y, z);
                         for (int k = 0; k < numOfVel; ++k) {
-                            f1_[idx + k] = feq[k];
+                            f1_[idx*numOfVel + k] = feq[k];
                         }
-                    //}
+
+                    } else {
+                        // Initialize Solid Nodes with zero velocity and density
+
+                        std::vector<double> feq(numOfVel, 0.0);
+                        lattice_->computeEquilibrium(feq.data(), 1.0, 0.0, 0.0, 0.0);
+                        int idx = geometry_.getIndex(x, y, z);
+                        for (int k = 0; k < numOfVel; ++k) {
+                            f1_[idx*numOfVel + k] = feq[k];
+                        }
+
+                    }
                 }
             }
         }
@@ -42,7 +53,7 @@ public:
     void run() override 
     {
         user::print();
-        
+
         initialize();
 
         const auto colParams = collision_ -> prepareColParams(user::colParams());
@@ -52,7 +63,7 @@ public:
 
         writeTSV(*f_in, *lattice_, geometry_, "../output", 0);
 
-        for (int t = 0; t < user::totalSteps(); ++t) {
+        for (int t = 1; t <= user::totalSteps(); ++t) {
 
             collision_->computeCollision(*f_in, *lattice_, geometry_, colParams, user::externalForce());
 
@@ -61,25 +72,20 @@ public:
             for (int z = 0; z < geometry_.nz(); ++z) {
                 for (int y = 0; y < geometry_.ny(); ++y) {
                     for (int x = 0; x < geometry_.nx(); ++x) {
+
                         if (geometry_.getBoundaryType(x, y, z) != BoundaryType::None) {
+
                             boundary_->applyBoundary(*f_out, *lattice_, geometry_, x, y, z);
+
                         }
                     }
                 }
             }
-            
-            if ( (t+1) % user::writeInterval() == 0) writeTSV(*f_out, *lattice_, geometry_, "../output", t+1);
+
+            if ( (t) % user::writeInterval() == 0) writeTSV(*f_out, *lattice_, geometry_, "../output", t);
 
             std::swap(f_in, f_out);
         }
-
-        // Guarantee that the final distribution is in f1_
-        if (user::totalSteps() % 2 != 0) {
-            f1_ = f2_;
-        }
-
-        writeTSV(*f_out, *lattice_, geometry_, "../output", user::totalSteps());
-
     }
 };
 

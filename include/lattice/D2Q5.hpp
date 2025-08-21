@@ -16,6 +16,6 @@ public:
 
     ) {}
 
-    void computeFields(const double* f, double& rho, double& vx, double& vy, double& /*vz*/) const override;
-    void computeEquilibrium(double* feq, const double rho, const double vx, const double vy, double /*vz*/) const override;
+    void computeFields(const double* f, double& rho, double& vx, double& vy, double& vz) const override;
+    void computeEquilibrium(double* feq, const double rho, const double vx, const double vy, double vz) const override;
 };

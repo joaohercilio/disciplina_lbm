@@ -1,7 +1,6 @@
 #pragma once
 
 #include "LatticeModel.hpp"
-#include <iostream>
 
 class D2Q9 : public LatticeModel {
 

@@ -1,6 +1,6 @@
 #include "lattice/D2Q9.hpp"
 
-void D2Q9::computeEquilibrium(double* feq, const double rho, const double vx, const double vy, const double /*vz*/) const {
+void D2Q9::computeEquilibrium(double* feq, const double rho, const double vx, const double vy, const double vz) const {
     
     double vx2 = vx*vx;
     double vy2 = vy*vy;
@@ -33,7 +33,7 @@ void D2Q9::computeEquilibrium(double* feq, const double rho, const double vx, co
     feq[0] = rho0 * feq[0];
 }
 
-void D2Q9::computeFields(const double* f, double& rho, double& vx, double& vy, double& /*vz*/) const {
+void D2Q9::computeFields(const double* f, double& rho, double& vx, double& vy, double& vz) const {
     
     rho = f[0] + f[1] + f[2] + f[3] + f[4] + f[5] + f[6] + f[7] + f[8];
 
@@ -44,4 +44,5 @@ void D2Q9::computeFields(const double* f, double& rho, double& vx, double& vy, d
 
     vx = mx * oneOverRho;
     vy = my * oneOverRho;
+    vz = 0.0;
 }
