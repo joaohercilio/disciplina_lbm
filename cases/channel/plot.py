@@ -7,25 +7,21 @@ L_phy = 1.0
 nu_phy = 1.0e-3
 Umax_phy = 0.01
 
-N_list = [8, 16, 32]
+N_list = [8, 16, 32,64]
 errors = []
 
 for N in N_list:
     file = f"output/{N}.tsv"
     df = pd.read_csv(file, sep=r"\s+")
-    u_latt = df["vx"].to_numpy(dtype=np.float64)[1:-1]
+    u_latt = df["vx"][1:-1]
 
     nu_latt = (1/3)*(tau - 0.5)
-    h = L_phy / (N)                 
-    delta = (h*h) * nu_latt / nu_phy
-    u_phy = u_latt * (h / delta)        
+    h = L_phy / N            
+    delta = nu_latt / nu_phy * h**2
+    u_phy = u_latt * h / delta        
 
-    L_latt = N
-    Umax_latt = Umax_phy * (nu_latt * h) / nu_phy
-    gx_latt = 8.0 * nu_latt * Umax_latt / (L_latt * L_latt)
-    gx_phy = gx_latt * h / ( delta*delta )
     y_nodes = (np.arange(N) + 0.5) * h
-    u_ana = (gx_phy/(2*nu_phy))*y_nodes*(L_phy - y_nodes)
+    u_ana = 4*Umax_phy/L_phy**2 * y_nodes*(L_phy - y_nodes)
 
     L2 = 1/np.sqrt(N) * np.sum( np.sqrt( (u_ana - u_phy)**2 ) )
     errors.append(L2)

@@ -16,20 +16,19 @@ namespace user {
     }
 
     // Problem parameters
-    const int N             = 32 + 2; // 3 fluid and 2 solid nodes
+    const int N             = 64 + 2; // 2 solid nodes at the boundaries
     const double L_phy      = 1.0;
-    const double L_latt     = N - 2;
     const double Umax_phy   = 0.01;
-
     const double nu_phy     = 1e-3;
-    const double nu_latt    = (1.0/3.0)*(tau - 0.5);
     
+    const double nu_latt    = (1.0/3.0)*(tau - 0.5);
+    const double L_latt     = N - 2;
+
     const double h          = L_phy / (N-2);
     const double delta      = nu_latt / nu_phy * h*h;
     
     const double Umax_latt  = Umax_phy * delta / h;
     const double gx_latt    = 8.0 * nu_latt * Umax_latt / (L_latt * L_latt);
-
 
     inline void print() {
     }
@@ -67,11 +66,11 @@ namespace user {
 
     // Total number of time steps
     int totalSteps () {
-        return 1e5;
+        return 1e7;
     }
 
     // Output options
     int writeInterval() {
-        return 1e5; 
+        return 1e7; 
     }
 }
