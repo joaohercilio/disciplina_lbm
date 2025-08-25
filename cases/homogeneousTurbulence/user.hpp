@@ -13,7 +13,7 @@ void uHat(double kx, double ky, double kz, complex<double> vHat[3], double kmin,
 
 namespace user {
     
-    const int N = 128;
+    const int N = 32;
 
     using LatticeModel = D3Q19; 
 
@@ -62,12 +62,12 @@ namespace user {
 
     // Total number of time steps
     int totalSteps () {
-        return 1;
+        return 10;
     }
 
     // Output options
     int writeInterval() {
-        return 100; 
+        return 1; 
     }
 
     void print() {}

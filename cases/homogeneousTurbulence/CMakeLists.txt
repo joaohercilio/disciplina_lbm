@@ -27,6 +27,7 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Streaming.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Output.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Timer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/vtkio/xmlvtk.cpp
 )
 
 add_executable(homogeneousTurbulence ${SRC})
@@ -41,3 +42,6 @@ if (FFTW3_INCLUDE_DIR AND FFTW3_LIBRARY)
 else()
     message(FATAL_ERROR "FFTW3 not found")
 endif()
+
+find_package(ZLIB REQUIRED)
+target_link_libraries(homogeneousTurbulence PRIVATE ZLIB::ZLIB)
