@@ -4,11 +4,5 @@
 #include "lattice/LatticeModel.hpp"
 #include "Geometry.hpp"
 
-class Streaming {
+void performStreaming(std::vector<double>& f, std::vector<double>& fn, const LatticeModel& lattice, const Geometry& geometry);
 
-public:
-    ~Streaming() = default;
-
-    void performStreaming(std::vector<double>& f, std::vector<double>& fn, const LatticeModel& lattice, const Geometry& geometry) const;
-
-};

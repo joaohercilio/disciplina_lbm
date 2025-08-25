@@ -3,9 +3,11 @@
 #include <memory>
 #include <cmath>
 #include <iostream>
+#include <chrono>
 
 #include "lattice/D2Q5.hpp"
 #include "lattice/D2Q9.hpp"
+#include "lattice/D3Q19.hpp"
 
 #include "collision/BGK.hpp"
 
@@ -22,17 +24,15 @@ protected:
     std::unique_ptr<CollisionModel> collision_;
     Geometry geometry_;
     std::unique_ptr<BoundaryModel> boundary_;
-    Streaming streaming_;
     std::vector<double> f1_;
     std::vector<double> f2_;
 
 public:
-    Simulation(std::unique_ptr<LatticeModel> lattice, std::unique_ptr<CollisionModel> collision, const Geometry& geometry, std::unique_ptr<BoundaryModel> boundary, const Streaming& streaming)
+    Simulation(std::unique_ptr<LatticeModel> lattice, std::unique_ptr<CollisionModel> collision, const Geometry& geometry, std::unique_ptr<BoundaryModel> boundary)
         : lattice_(std::move(lattice)),
           collision_(std::move(collision)),
           geometry_(geometry),
           boundary_(std::move(boundary)),
-          streaming_(streaming),
           f1_(geometry_.getNumOfPoints() * lattice_->getNumOfVel(), 0.0),
           f2_(geometry_.getNumOfPoints() * lattice_->getNumOfVel(), 0.0) {}
 
