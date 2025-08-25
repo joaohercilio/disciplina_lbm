@@ -4,8 +4,6 @@
 
 namespace user {
     
-    Streaming streaming;
-
     // Choose Lattice Model
     using LatticeModel = D2Q9; 
 

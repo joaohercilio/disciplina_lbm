@@ -4,8 +4,6 @@
 
 namespace user {
     
-    Streaming streaming;
-
     // Choose Lattice Model
     using LatticeModel = D2Q9; 
 
@@ -26,18 +24,18 @@ namespace user {
     // External forces
     std::vector<double> externalForce()
     {
-        return {0.1, 0.0, 0.0};
+        return {0.0, 0.0, 0.0};
     }
 
     // Geometry definition and boundary conditions
-    using BoundaryModel = BounceAndBack;
+    using BoundaryModel = HalfwayBounceAndBack;
     Geometry problemGeometry() {
         Geometry geo(10, 10, 10);
         //geo.setSolid(0, 0, 0);
 
         // Boundary conditions
-        geo.setBoundaryType(0, 0, 0, BoundaryType::BounceAndBackSouth);
-        geo.setBoundaryType(0, 7, 0, BoundaryType::BounceAndBackNorth);
+        geo.setBoundaryType(0, 0, 0, BoundaryType::HalfwayBounceAndBackSouth);
+        geo.setBoundaryType(0, 7, 0, BoundaryType::HalfwayBounceAndBackNorth);
         
         return geo;
     }

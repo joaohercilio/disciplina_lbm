@@ -1,6 +1,6 @@
 #include "Streaming.hpp"
 
-void Streaming::performStreaming(std::vector<double>& f, std::vector<double>& fn, const LatticeModel& lattice, const Geometry& geometry) const
+void performStreaming(std::vector<double>& f, std::vector<double>& fn, const LatticeModel& lattice, const Geometry& geometry)
 {
     int numOfVel = lattice.getNumOfVel();
     
@@ -12,25 +12,24 @@ void Streaming::performStreaming(std::vector<double>& f, std::vector<double>& fn
     int ny = geometry.ny();
     int nz = geometry.nz();
 
-    for (int x = 0; x < nx; x++) {
-        for (int y = 0; y < ny; y++) {
-            for (int z = 0; z < nz; z++) {
-                if (geometry.getNode(x,y,z) == NodeType::Fluid) {
-                    
-                    for (int k = 0; k < numOfVel; k++) {
-                        
-                        int xn = (x + cx[k] + nx) % nx;
-                        int yn = (y + cy[k] + ny) % ny;
-                        int zn = (z + cz[k] + nz) % nz;
+    for (int i = 0; i < geometry.getNumOfPoints(); i++) {
+        if (geometry.getNode(i) == NodeType::Fluid) {
+            
+            int x, y, z;
+            
+            geometry.getCoords(i, x, y, z);
 
-                        int idxn = geometry.getIndex(xn, yn, zn);
-                        int idx  = geometry.getIndex(x, y, z);
+            for (int k = 0; k < numOfVel; k++) {
+                
+                int xn = (x + cx[k] + nx) % nx;
+                int yn = (y + cy[k] + ny) % ny;
+                int zn = (z + cz[k] + nz) % nz;
 
-                        fn[idxn * numOfVel + k] = f[idx * numOfVel + k];
-                    }
-              
-                }
-            }
+                int idxn = geometry.getIndex(xn, yn, zn);
+                int idx  = geometry.getIndex(x, y, z);
+
+                fn[idxn * numOfVel + k] = f[idx * numOfVel + k];
+            }        
         }
     }
 }

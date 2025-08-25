@@ -4,9 +4,7 @@
 // ----- PROBLEM SETUP (the user should edit this namespace) ----- //
 
 namespace user {
- 
-    Streaming streaming;
-  
+   
     using LatticeModel = D2Q9; 
 
     using CollisionModel = BGK;
@@ -16,7 +14,7 @@ namespace user {
     }
 
     // Problem parameters
-    const int N             = 64 + 2; // 2 solid nodes at the boundaries
+    const int N             = 32 + 2; // 2 solid nodes at the boundaries
     const double L_phy      = 1.0;
     const double Umax_phy   = 0.01;
     const double nu_phy     = 1e-3;
@@ -66,11 +64,11 @@ namespace user {
 
     // Total number of time steps
     int totalSteps () {
-        return 1e7;
+        return 1e5;
     }
 
     // Output options
     int writeInterval() {
-        return 1e7; 
+        return 1e5; 
     }
 }
