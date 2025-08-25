@@ -11,10 +11,10 @@ void writeTSV(const std::vector<double>& f, const LatticeModel& lattice, const G
     int numOfVel = lattice.getNumOfVel();
     int n = geo.getNumOfPoints();
     
-    for (int i = 0; i < n; ++i) {
+    for (int id = 0; id < n; ++id) {
         int x, y, z;
-        geo.getCoords(i, x, y, z);
-        const double* p = f.data() + i * numOfVel;
+        geo.getCoords(id, x, y, z);
+        const double* p = f.data() + id * numOfVel;
         double rho, vx, vy, vz;
         lattice.computeFields(p, rho, vx, vy, vz);
         out << x << "\t" << y << "\t" << z << "\t" << vx << "\t" << vy << "\t" << vz << "\t" << rho << "\n";

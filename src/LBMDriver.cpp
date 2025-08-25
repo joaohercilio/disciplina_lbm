@@ -28,9 +28,9 @@ public:
                         std::vector<double> feq(numOfVel, 0.0);
                         lattice_->computeEquilibrium(feq.data(), rho, u[0], u[1], u[2]); 
 
-                        int idx = geometry_.getIndex(x, y, z);
+                        int id = geometry_.getIndex(x, y, z);
                         for (int k = 0; k < numOfVel; ++k) {
-                            f1_[idx*numOfVel + k] = feq[k];
+                            f1_[id*numOfVel + k] = feq[k];
                         }
 
                     } else {
@@ -38,9 +38,9 @@ public:
 
                         std::vector<double> feq(numOfVel, 0.0);
                         lattice_->computeEquilibrium(feq.data(), 1.0, 0.0, 0.0, 0.0);
-                        int idx = geometry_.getIndex(x, y, z);
+                        int id = geometry_.getIndex(x, y, z);
                         for (int k = 0; k < numOfVel; ++k) {
-                            f1_[idx*numOfVel + k] = feq[k];
+                            f1_[id*numOfVel + k] = feq[k];
                         }
                     }
                 }
@@ -94,7 +94,9 @@ public:
             auto stopBnd = high_resolution_clock::now();
             boundaryDuration += duration_cast<microseconds>(stopBnd - startBnd);
 
-            if ( (t) % user::writeInterval() == 0) writeTSV(*f_out, *lattice_, geometry_, "../output", t);
+            if ( t % user::writeInterval() == 0) writeTSV(*f_out, *lattice_, geometry_, "../output", t);
+
+            if ( t % 50 == 0 ) {std::cout << t << std::endl;}
 
             std::swap(f_in, f_out);
         }

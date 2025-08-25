@@ -12,6 +12,7 @@
 #include "collision/BGK.hpp"
 
 #include "boundary/HalfwayBounceAndBack.hpp"
+#include "boundary/Periodic.hpp"
 
 #include "Geometry.hpp"
 #include "Streaming.hpp"

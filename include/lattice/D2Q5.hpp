@@ -5,6 +5,7 @@
 class D2Q5 : public LatticeModel {
 
 public:
+
     D2Q5() : LatticeModel(
 
     /* NUM_OF_DIM , NUM_OF_VEL */    2, 5,                                    

@@ -12,12 +12,12 @@ void performStreaming(std::vector<double>& f, std::vector<double>& fn, const Lat
     int ny = geometry.ny();
     int nz = geometry.nz();
 
-    for (int i = 0; i < geometry.getNumOfPoints(); i++) {
-        if (geometry.getNode(i) == NodeType::Fluid) {
+    for (int id = 0; id < geometry.getNumOfPoints(); id++) {
+        if (geometry.getNode(id) == NodeType::Fluid) {
             
             int x, y, z;
             
-            geometry.getCoords(i, x, y, z);
+            geometry.getCoords(id, x, y, z);
 
             for (int k = 0; k < numOfVel; k++) {
                 
@@ -25,10 +25,9 @@ void performStreaming(std::vector<double>& f, std::vector<double>& fn, const Lat
                 int yn = (y + cy[k] + ny) % ny;
                 int zn = (z + cz[k] + nz) % nz;
 
-                int idxn = geometry.getIndex(xn, yn, zn);
-                int idx  = geometry.getIndex(x, y, z);
+                int idn = geometry.getIndex(xn, yn, zn);
 
-                fn[idxn * numOfVel + k] = f[idx * numOfVel + k];
+                fn[idn * numOfVel + k] = f[id * numOfVel + k];
             }        
         }
     }

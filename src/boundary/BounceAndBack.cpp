@@ -23,7 +23,7 @@ void HalfwayBounceAndBack::applySouthBoundary(std::vector<double>& f,
                                        const Geometry& geometry,
                                        int x, int y, int z)
 {
-    int idx = geometry.getIndex(x, y, z);
+    int id = geometry.getIndex(x, y, z);
 
     int nx = geometry.nx();
     int ny = geometry.ny();
@@ -35,7 +35,7 @@ void HalfwayBounceAndBack::applySouthBoundary(std::vector<double>& f,
 
     int numOfVel = lattice.getNumOfVel();
 
-    double* mapF = f.data() + idx*numOfVel;
+    double* mapF = f.data() + id*numOfVel;
 
     for (int k = 0; k < numOfVel; k++) {
         if (cy[k] == -1) {
@@ -44,8 +44,8 @@ void HalfwayBounceAndBack::applySouthBoundary(std::vector<double>& f,
             int yn = (y + cy[k-1] + ny) % ny;
             int zn = (z + cz[k-1] + nz) % nz;
 
-            int idxn = geometry.getIndex(xn, yn, zn);
-            double* mapFn = f.data() + idxn*numOfVel;
+            int idn = geometry.getIndex(xn, yn, zn);
+            double* mapFn = f.data() + idn*numOfVel;
             mapFn[k-1] = mapF[k];
             mapF[k] = 0.0;
         }
@@ -57,7 +57,7 @@ void HalfwayBounceAndBack::applyNorthBoundary(std::vector<double>& f,
                                        const Geometry& geometry,
                                        int x, int y, int z)
 {
-    int idx = geometry.getIndex(x, y, z);
+    int id = geometry.getIndex(x, y, z);
 
     int nx = geometry.nx();
     int ny = geometry.ny();
@@ -69,7 +69,7 @@ void HalfwayBounceAndBack::applyNorthBoundary(std::vector<double>& f,
 
     int numOfVel = lattice.getNumOfVel();
 
-    double* mapF = f.data() + idx*numOfVel;
+    double* mapF = f.data() + id*numOfVel;
 
     for (int k = 0; k < numOfVel; k++) {
         if (cy[k] == 1) {
@@ -77,9 +77,9 @@ void HalfwayBounceAndBack::applyNorthBoundary(std::vector<double>& f,
             int xn = (x + cx[k+1] + nx) % nx;
             int yn = (y + cy[k+1] + ny) % ny;
             int zn = (z + cz[k+1] + nz) % nz;
-            int idxn = geometry.getIndex(xn, yn, zn);
+            int idn = geometry.getIndex(xn, yn, zn);
 
-            double* mapFn = f.data() + idxn*numOfVel;
+            double* mapFn = f.data() + idn*numOfVel;
 
             mapFn[k+1] = mapF[k];
             mapF[k] = 0.0;
