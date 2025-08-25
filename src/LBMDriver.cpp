@@ -16,19 +16,20 @@ public:
         int ny = geometry_.ny();
         int nz = geometry_.nz();
 
+        std::vector<double> u = user::initialVelocity(geometry_);
+        std::vector<double> rho = user::initialDensity(geometry_);
+
         for (int z = 0; z < nz; ++z) {
             for (int y = 0; y < ny; ++y) {
                 for (int x = 0; x < nx; ++x) {
                     if (geometry_.getNode(x, y, z) == NodeType::Fluid) {
 
-                        std::vector<double> u = user::initialVelocity(x, y, z);
-
-                        double rho = user::initialDensity(x, y, z);
+                        int id = geometry_.getIndex(x,y,z);
 
                         std::vector<double> feq(numOfVel, 0.0);
-                        lattice_->computeEquilibrium(feq.data(), rho, u[0], u[1], u[2]); 
 
-                        int id = geometry_.getIndex(x, y, z);
+                        lattice_->computeEquilibrium(feq.data(), rho[id], u[id], u[id+1], u[id+2]); 
+
                         for (int k = 0; k < numOfVel; ++k) {
                             f1_[id*numOfVel + k] = feq[k];
                         }
@@ -50,17 +51,13 @@ public:
 
     void run() override 
     {
-        using std::chrono::high_resolution_clock;
-        using std::chrono::duration_cast;
-        using std::chrono::microseconds;
-
-        microseconds collisionDuration = microseconds::zero();
-        microseconds streamingDuration = microseconds::zero();
-        microseconds boundaryDuration  = microseconds::zero();
-
         user::print();
 
+        Timer timer;
+
+        timer.start("Initialization");
         initialize();
+        timer.stop("Initialization");
 
         const auto colParams = collision_ -> prepareColParams(user::colParams());
 
@@ -71,17 +68,15 @@ public:
 
         for (int t = 1; t <= user::totalSteps(); ++t) {
 
-            auto startCol = high_resolution_clock::now();
+            timer.start("Collision");
             collision_->computeCollision(*f_in, *lattice_, geometry_, colParams, user::externalForce());
-            auto stopCol = high_resolution_clock::now();
-            collisionDuration += duration_cast<microseconds>(stopCol - startCol);
+            timer.stop("Collision");
 
-            auto startStr = high_resolution_clock::now();
+            timer.start("Streaming");
             performStreaming(*f_in, *f_out, *lattice_, geometry_);
-            auto stopStr = high_resolution_clock::now();
-            streamingDuration += duration_cast<microseconds>(stopStr - startStr);
+            timer.stop("Streaming");
 
-            auto startBnd = high_resolution_clock::now();
+            timer.start("Boundary");
             for (int z = 0; z < geometry_.nz(); ++z) {
                 for (int y = 0; y < geometry_.ny(); ++y) {
                     for (int x = 0; x < geometry_.nx(); ++x) {
@@ -91,8 +86,7 @@ public:
                     }
                 }
             }
-            auto stopBnd = high_resolution_clock::now();
-            boundaryDuration += duration_cast<microseconds>(stopBnd - startBnd);
+            timer.stop("Boundary");
 
             if ( t % user::writeInterval() == 0) writeTSV(*f_out, *lattice_, geometry_, "../output", t);
 
@@ -101,9 +95,8 @@ public:
             std::swap(f_in, f_out);
         }
 
-        std::cout << "Collision duration: " << collisionDuration.count() / 1000 << " ms\n"
-                  << "Streaming duration: " << streamingDuration.count() / 1000 << " ms\n"
-                  << "Boundary duration:  "  << boundaryDuration.count() / 1000 << " ms\n";
+        timer.report();
+
     }
 };
 

@@ -35,12 +35,17 @@ namespace user {
     }
 
     // Initial conditions
+    /*
     std::vector<double> initialVelocity(int x, int y, int z) {
         return {0, vy(x), 0};
     }
+    */
+    std::vector<double> initialVelocity(const Geometry& geo) {
+        return {0, 0, 0};
+    }
 
-    double initialDensity (int x, int y, int z) {
-        return rho0;
+    std::vector<double> initialDensity (const Geometry& geo) {
+        return {0, 0, 0};
     }
 
     // Geometry definition

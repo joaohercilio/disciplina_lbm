@@ -17,6 +17,7 @@
 #include "Geometry.hpp"
 #include "Streaming.hpp"
 #include "Output.hpp"
+#include "Timer.hpp"
 
 class Simulation {
 

@@ -26,6 +26,18 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Geometry.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Streaming.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Output.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Timer.cpp
 )
 
 add_executable(homogeneousTurbulence ${SRC})
+
+find_path(FFTW3_INCLUDE_DIR fftw3.h)
+find_library(FFTW3_LIBRARY NAMES fftw3)
+
+if (FFTW3_INCLUDE_DIR AND FFTW3_LIBRARY)
+    message(STATUS "FFTW3 found: ${FFTW3_LIBRARY}")
+    target_include_directories(homogeneousTurbulence PRIVATE ${FFTW3_INCLUDE_DIR})
+    target_link_libraries(homogeneousTurbulence PRIVATE ${FFTW3_LIBRARY})
+else()
+    message(FATAL_ERROR "FFTW3 not found")
+endif()
