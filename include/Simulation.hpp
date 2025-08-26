@@ -10,6 +10,7 @@
 #include "lattice/D3Q19.hpp"
 
 #include "collision/BGK.hpp"
+#include "collision/MRT.hpp"
 
 #include "boundary/HalfwayBounceAndBack.hpp"
 #include "boundary/Periodic.hpp"
@@ -19,32 +20,85 @@
 #include "Output.hpp"
 #include "Timer.hpp"
 
+/**
+ * @brief Abstract base class representing a general LBM simulation.
+ *
+ * This class manages the lattice model, collision model, geometry, boundary model,
+ * and distribution function arrays. It defines the interface for initializing
+ * the simulation and running the time loop.
+ */
 class Simulation {
 
 protected:
-    std::unique_ptr<LatticeModel> lattice_;
-    std::unique_ptr<CollisionModel> collision_;
-    Geometry geometry_;
-    std::unique_ptr<BoundaryModel> boundary_;
-    std::vector<double> f1_;
-    std::vector<double> f2_;
+
+    std::unique_ptr<LatticeModel> lattice_;     ///< Pointer to the lattice model
+    std::unique_ptr<CollisionModel> collision_; ///< Pointer to the collision model
+    Geometry geometry_;                         ///< Geometry of the computational domain
+    std::unique_ptr<BoundaryModel> boundary_;   ///< Pointer to the boundary model
+    std::vector<double> f1_;                    ///< Distribution function at current step
+    std::vector<double> f2_;                    ///< Distribution function at next step
 
 public:
-    Simulation(std::unique_ptr<LatticeModel> lattice, std::unique_ptr<CollisionModel> collision, const Geometry& geometry, std::unique_ptr<BoundaryModel> boundary)
+
+    /**
+     * @brief Constructs a Simulation object with the given models and geometry.
+     *
+     * Initializes the distribution function vectors to zero.
+     *
+     * @param lattice Unique pointer to a lattice model
+     * @param collision Unique pointer to a collision model
+     * @param geometry Geometry object describing the computational domain
+     * @param boundary Unique pointer to a boundary model
+     */
+    Simulation(std::unique_ptr<LatticeModel> lattice,
+               std::unique_ptr<CollisionModel> collision,
+               Geometry geometry,
+               std::unique_ptr<BoundaryModel> boundary)
+
         : lattice_(std::move(lattice)),
           collision_(std::move(collision)),
-          geometry_(geometry),
           boundary_(std::move(boundary)),
-          f1_(geometry_.getNumOfPoints() * lattice_->getNumOfVel(), 0.0),
-          f2_(geometry_.getNumOfPoints() * lattice_->getNumOfVel(), 0.0) {}
+          geometry_(std::move(geometry))
+    {
+    const int totalPoints = geometry_.getNumOfPoints();
+    const int numOfVel    = lattice_->getNumOfVel();
+    f1_.resize(totalPoints * numOfVel, 0.0);
+    f2_.resize(totalPoints * numOfVel, 0.0);
+    }
 
+    /// Virtual destructor
     virtual ~Simulation() = default;
 
+    /**
+     * @brief Initializes the simulation distribution function with given velocity and density fields.
+     *
+     * Pure virtual method that must be implemented in derived classes.
+     */
     virtual void initialize() = 0;
+
+    /**
+     * @brief Runs the simulation time loop.
+     *
+     * Pure virtual method that must be implemented in derived classes.
+     */
     virtual void run() = 0;
 
+    /**
+     * @brief Returns a constant reference to the lattice model.
+     * @return Reference to the lattice model
+     */
     const LatticeModel& getLattice() const;
+    
+    /**
+     * @brief Returns a constant reference to the geometry.
+     * @return Reference to the geometry object
+     */
     const Geometry&     getGeometry() const;
 
+    /**
+     * @brief Factory method to create a concrete simulation instance.
+     *
+     * @return Unique pointer to a Simulation object
+     */
     static std::unique_ptr<Simulation> create();
 };

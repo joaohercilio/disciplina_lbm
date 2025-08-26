@@ -3,24 +3,24 @@
 #include "CollisionModel.hpp"
 
 /**
- * @brief Class that defines the Bhatnagar–Gross–Krook (BGK) collision operator methods.
+ * @brief Class that defines the Multi Relatxation Time (MRT) collision operator methods.
  */
-class BGK : public CollisionModel {
+class MRT : public CollisionModel {
 
 public:
     /**
-     * @brief Prepares the collision parameters for the BGK operator
+     * @brief Prepares the collision parameters for the MRT operator
      * 
-     * The BGK operator requires only the "tau" parameter, wich must be bigger than 0.5 
+     * The MRT operator requires only the "tau" parameter, wich must be bigger than 0.5 
      * 
      * @param raw Constant reference to a map of raw collision parameters (ColParamMap).
      */
+
     ColParamMap prepareColParams(const ColParamMap& raw) const override;
 
     /**
-     * @brief Computes the collision all over the domain using the formula
-     * 
-     * \f$ f_i = \left(1-\frac{1}{\tau} \right) f_i^{'} + \frac{1}{\tau} f_i^{eq} \f$
+     * @brief Computes the collision all over the domain by calculating the moments of the distribution function 
+     * and colliding at the moment space with individual relaxation rates.
      * 
      * @param f Vector storing the particle distribution function 
      * @param lattice Constant reference to the lattice object 
@@ -28,6 +28,7 @@ public:
      * @param colParams Constant reference to the collision parameters map specific to the Collision Model
      * @param force Constant vector storing the (x, y, z) components of the external force
      */
+
     void computeCollision(std::vector<double>& f,
                           const LatticeModel& lattice,
                           const Geometry& geometry,

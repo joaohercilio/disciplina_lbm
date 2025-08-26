@@ -21,6 +21,7 @@ set(SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/lattice/D2Q5.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/lattice/D3Q19.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/collision/BGK.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/collision/MRT.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/boundary/BounceAndBack.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/boundary/Periodic.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Geometry.cpp

@@ -18,7 +18,7 @@ namespace user {
     using LatticeModel = D3Q19; 
 
     // Choose Collision Model and set collision parameters
-    using CollisionModel = BGK;
+    using CollisionModel = MRT;
     double tau = 0.8;
     ColParamMap colParams() {
         return {{"tau", tau}};
@@ -73,13 +73,11 @@ namespace user {
     void print() {}
 }
 
-
 double energySpectrum_(double k, double kmin, double kmax, double A, int m)
 {
     if (k <= kmin || k >= kmax) return 0.0;
-    return A * pow(k,m-2) * exp(-0.14 * k*k) / (4 * M_PI );
+    return A * pow(k,m-2) * exp(-0.14 * k*k) / (2 * M_PI );
 }
-
 
 void uHat(double kx, double ky, double kz, complex<double> vHat[3], double kmin, double kmax, double A, double m)
 {
@@ -112,7 +110,6 @@ void uHat(double kx, double ky, double kz, complex<double> vHat[3], double kmin,
         vHat[2] = -(beta * M) / kMag;
     }
 }
-
 
 void initVelocity(std::vector<double>& u, const Geometry& geo, double kmin, double kmax, double A, double m)
 {

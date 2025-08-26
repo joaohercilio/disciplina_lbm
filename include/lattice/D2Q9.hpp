@@ -2,6 +2,11 @@
 
 #include "LatticeModel.hpp"
 
+/**
+ * @brief Concrete implementation of the D2Q9 lattice model.
+ *
+ * Inherits all method documentation from LatticeModel.
+ */
 class D2Q9 : public LatticeModel {
 
 public:
@@ -17,7 +22,10 @@ public:
     
     ) {}
 
-    void computeFields(const double* f, double& rho, double& vx, double& vy, double& /*vz*/) const override;
-    void computeEquilibrium(double* feq, const double rho, const double vx, const double vy, double /*vz*/) const override;
+    /// \copydoc LatticeModel::computeFields
+    void computeFields(const double* f, double& rho, double& vx, double& vy, double& vz) const override;
+
+    /// \copydoc LatticeModel::computeEquilibrium
+    void computeEquilibrium(double* feq, const double rho, const double vx, const double vy, double vz) const override;
 };
 
