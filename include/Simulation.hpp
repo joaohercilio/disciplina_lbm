@@ -8,14 +8,12 @@
 #include "lattice/D2Q5.hpp"
 #include "lattice/D2Q9.hpp"
 #include "lattice/D3Q19.hpp"
-
 #include "collision/BGK.hpp"
 #include "collision/MRT.hpp"
-
 #include "boundary/HalfwayBounceAndBack.hpp"
 #include "boundary/Periodic.hpp"
-
 #include "Geometry.hpp"
+#include "Initialization.hpp"
 #include "Streaming.hpp"
 #include "Output.hpp"
 #include "Timer.hpp"
@@ -70,13 +68,6 @@ public:
     virtual ~Simulation() = default;
 
     /**
-     * @brief Initializes the simulation distribution function with given velocity and density fields.
-     *
-     * Pure virtual method that must be implemented in derived classes.
-     */
-    virtual void initialize() = 0;
-
-    /**
      * @brief Runs the simulation time loop.
      *
      * Pure virtual method that must be implemented in derived classes.
@@ -93,7 +84,7 @@ public:
      * @brief Returns a constant reference to the geometry.
      * @return Reference to the geometry object
      */
-    const Geometry&     getGeometry() const;
+    const Geometry& getGeometry() const;
 
     /**
      * @brief Factory method to create a concrete simulation instance.

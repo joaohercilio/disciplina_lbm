@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+
 #include "lattice/LatticeModel.hpp"
 #include "Geometry.hpp"
 

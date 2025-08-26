@@ -9,60 +9,20 @@ public:
             std::make_unique<user::BoundaryModel>()
         ) {}
 
-    void initialize() override 
-    {
-        int numOfVel = lattice_->getNumOfVel();
-        int nx = geometry_.nx();
-        int ny = geometry_.ny();
-        int nz = geometry_.nz();
-
-        std::vector<double> u = user::initialVelocity(geometry_);
-        std::vector<double> rho = user::initialDensity(geometry_);
-
-        for (int z = 0; z < nz; ++z) {
-            for (int y = 0; y < ny; ++y) {
-                for (int x = 0; x < nx; ++x) {
-                    if (geometry_.getNode(x, y, z) == NodeType::Fluid) {
-
-                        int id = geometry_.getIndex(x,y,z);
-
-                        std::vector<double> feq(numOfVel, 0.0);
-
-                        lattice_->computeEquilibrium(feq.data(), rho[id], u[id], u[id+1], u[id+2]); 
-
-                        for (int k = 0; k < numOfVel; ++k) {
-                            f1_[id*numOfVel + k] = feq[k];
-                        }
-
-                    } else {
-                        // Initialize Solid Nodes with zero velocity and density
-
-                        std::vector<double> feq(numOfVel, 0.0);
-                        lattice_->computeEquilibrium(feq.data(), 1.0, 0.0, 0.0, 0.0);
-                        int id = geometry_.getIndex(x, y, z);
-                        for (int k = 0; k < numOfVel; ++k) {
-                            f1_[id*numOfVel + k] = feq[k];
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     void run() override 
     {
-        user::print();
-
-        Timer timer;
-
-        timer.start("Initialization");
-        initialize();
-        timer.stop("Initialization");
+        auto& f_in  = f1_;
+        auto& f_out = f2_;
 
         const auto colParams = collision_ -> prepareColParams(user::colParams());
 
-        auto& f_in  = f1_;
-        auto& f_out = f2_;
+        Timer timer;
+
+        user::print();
+
+        timer.start("Initialization");
+        initializeFields(f_in, *lattice_, geometry_, colParams, user::initialVelocity(geometry_), user::initialDensity(geometry_));
+        timer.stop("Initialization");
 
         writeTSV(f_in, *lattice_, geometry_, "../outputTSV", 0);
         writeVTI(f_in, *lattice_, geometry_, "../outputVTI", 0);
