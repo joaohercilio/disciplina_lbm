@@ -29,6 +29,20 @@ public:
     virtual ~CollisionModel() = default;
 
     /**
+     * @brief Prepares collision parameters for the collision model.
+     *
+     * This method can be overridden in derived classes to modify or augment
+     * the raw collision parameters before using them in the simulation.
+     *
+     * @param raw Constant reference to a map of raw collision parameters (ColParamMap)
+     * @return A ColParamMap containing the prepared collision parameters
+     *
+     * @note The default implementation simply returns the input parameters unmodified.
+     *       Derived classes can override this to apply model-specific adjustments.
+     */
+    virtual ColParamMap prepareColParams(const ColParamMap& raw) const { return raw; }
+
+    /**
      * @brief Computes the collision of the distribution function all over the Fluid nodes
      * 
      * @param f Vector storing the particle distribution function 
@@ -46,16 +60,21 @@ public:
                                   const std::vector<double>& force) = 0;
 
     /**
-     * @brief Prepares collision parameters for the collision model.
-     *
-     * This method can be overridden in derived classes to modify or augment
-     * the raw collision parameters before using them in the simulation.
-     *
-     * @param raw Constant reference to a map of raw collision parameters (ColParamMap)
-     * @return A ColParamMap containing the prepared collision parameters
-     *
-     * @note The default implementation simply returns the input parameters unmodified.
-     *       Derived classes can override this to apply model-specific adjustments.
+     * @brief Initializes the density field compatible with the imposed velocity
+     * 
+     * @param f Vector storing the particle distribution function 
+     * @param lattice Constant reference to the lattice object 
+     * @param geometry Constant reference to the geometry object
+     * @param colParams Constant reference to the collision parameters map specific to the Collision Model
+     * 
+     * @note This method is pure virtual and defines the interface for all collision models.
      */
-    virtual ColParamMap prepareColParams(const ColParamMap& raw) const { return raw; }
+    virtual void initializeDensityField(std::vector<double>& f, 
+                                        std::vector<double>& fn,
+                                        const LatticeModel& lattice, 
+                                        const Geometry& geometry,
+                                        const ColParamMap& colParams,
+                                        const std::vector<double>& u,
+                                        const std::vector<double>& force,
+                                        const int numberOfIterations) = 0;
 };

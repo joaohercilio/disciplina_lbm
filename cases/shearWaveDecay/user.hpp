@@ -47,6 +47,11 @@ namespace user {
     std::vector<double> initialDensity (const Geometry& geo) {
         return {0, 0, 0};
     }
+    
+    // Number of iterations on the Density Field Initialization procedure
+    int initializePressureIterations() {
+        return 5000;
+    }
 
     // Geometry definition
     using BoundaryModel = HalfwayBounceAndBack;

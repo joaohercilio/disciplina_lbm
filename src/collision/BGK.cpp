@@ -52,3 +52,14 @@ void BGK::computeCollision(std::vector<double>& f,
         }
     }
 }
+
+void BGK::initializeDensityField(std::vector<double>& f,
+                                std::vector<double>& fn,
+                                const LatticeModel& lattice,
+                                const Geometry& geometry,
+                                const ColParamMap& colParams,
+                                const std::vector<double>& u,
+                                const std::vector<double>& force,
+                                const int numberOfIterations)
+{
+}

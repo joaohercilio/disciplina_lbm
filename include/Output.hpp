@@ -33,3 +33,4 @@ void writeTSV(const std::vector<double>& f, const LatticeModel& lattice, const G
  */
 
 void writeVTI(const std::vector<double>& f, const LatticeModel& lattice, const Geometry& geo, const std::string& path, int t);
+

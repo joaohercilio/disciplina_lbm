@@ -47,6 +47,11 @@ namespace user {
         return rho;
     }
 
+    // Number of iterations on the Density Field Initialization procedure
+    int initializePressureIterations() {
+        return 0;
+    }
+
     // External forces
     std::vector<double> externalForce()
     {

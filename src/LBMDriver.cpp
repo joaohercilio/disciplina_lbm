@@ -16,12 +16,17 @@ public:
         auto& f_in  = f1_;
         auto& f_out = f2_;
 
+        std::vector<double> u0 = user::initialVelocity(geometry_);
+        std::vector<double> rho0 = user::initialDensity(geometry_);
+
         const auto colParams = collision_ -> prepareColParams(user::colParams());
 
         Timer timer;
 
         timer.start("Initialization");
-        initializeFields(f_in, *lattice_, geometry_, colParams, user::initialVelocity(geometry_), user::initialDensity(geometry_));
+        initializeFields(f_in, *lattice_, geometry_, colParams, u0, rho0);
+        writeTSV(f_in, *lattice_, geometry_, "../outputTSV", 66666666);
+        collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, user::externalForce(), user::initializePressureIterations());
         timer.stop("Initialization");
 
         writeTSV(f_in, *lattice_, geometry_, "../outputTSV", 0);
