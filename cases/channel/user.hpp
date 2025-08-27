@@ -32,13 +32,15 @@ namespace user {
     }
 
     // Initial conditions
-    std::vector<double> initialVelocity(int x, int y, int z)
+    std::vector<double> initialVelocity(const Geometry& geo)
     {
-        return {0.0, 0.0, 0.0}; 
+        std::vector<double> u (geo.getNumOfPoints(), 0.0);
+        return u;
     }
 
-    double initialDensity (int x, int y, int z) {
-        return 1.0; // Uniform density
+    std::vector<double> initialDensity (const Geometry& geo) {
+        std::vector<double> rho (geo.getNumOfPoints(), 1.0);
+        return rho;
     }
 
     // External forces
@@ -64,11 +66,11 @@ namespace user {
 
     // Total number of time steps
     int totalSteps () {
-        return 1e5;
+        return 1e3;
     }
 
     // Output options
     int writeInterval() {
-        return 1e5; 
+        return 100; 
     }
 }

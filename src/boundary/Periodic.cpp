@@ -2,8 +2,7 @@
 
 void PeriodicBoundary::applyBoundary(std::vector<double>& f, 
                                     const LatticeModel& lattice, 
-                                    const Geometry& geometry,
-                                    int x, int y, int z)
+                                    const Geometry& geometry)
 {
     // Nothing to do
 }                                       
@@ -11,7 +10,7 @@ void PeriodicBoundary::applyBoundary(std::vector<double>& f,
 void PeriodicBoundary::applySouthBoundary(std::vector<double>& f, 
                                     const LatticeModel& lattice, 
                                     const Geometry& geometry,
-                                    int x, int y, int z)
+                                    int id)
 {
     // Nothing to do
 }                                       
@@ -19,7 +18,7 @@ void PeriodicBoundary::applySouthBoundary(std::vector<double>& f,
 void PeriodicBoundary::applyNorthBoundary(std::vector<double>& f, 
                                     const LatticeModel& lattice, 
                                     const Geometry& geometry,
-                                    int x, int y, int z)
+                                    int id)
 {
     // Nothing to do
 }                                       

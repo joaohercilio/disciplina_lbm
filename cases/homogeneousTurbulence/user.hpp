@@ -62,7 +62,7 @@ namespace user {
 
     // Total number of time steps
     int totalSteps () {
-        return 10;
+        return 100;
     }
 
     // Output options

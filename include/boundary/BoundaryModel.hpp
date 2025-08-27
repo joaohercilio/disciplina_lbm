@@ -47,8 +47,7 @@ public:
      */
     virtual void applyBoundary(std::vector<double>& f, 
                             const LatticeModel& lattice, 
-                            const Geometry& geometry,
-                            int x, int y, int z) = 0;
+                            const Geometry& geometry) = 0;
 
 private:
 
@@ -58,16 +57,13 @@ private:
      * @param f Vector storing the particle distribution function 
      * @param lattice Constant reference to the lattice object 
      * @param geometry Constant reference to the geometry object
-     * @param x X-coordinate of the Solid node
-     * @param y Y-coordinate of the Solid node
-     * @param z Z-coordinate of the Solid node
      * 
      * @note This method is pure virtual and defines the interface for all boundary models.
      */
     virtual void applySouthBoundary(std::vector<double>& f, 
                                     const LatticeModel& lattice, 
                                     const Geometry& geometry,
-                                    int x, int y, int z) = 0;
+                                    int id) = 0;
 
     /**
      * @brief Applies boundary conditions at a Solid node located at the north boundary of the domain
@@ -75,15 +71,13 @@ private:
      * @param f Vector storing the particle distribution function 
      * @param lattice Constant reference to the lattice object 
      * @param geometry Constant reference to the geometry object
-     * @param x X-coordinate of the Solid node
-     * @param y Y-coordinate of the Solid node
-     * @param z Z-coordinate of the Solid node
+     * @param id Index of the node
      * 
      * @note This method is pure virtual and defines the interface for all boundary models.
      */
     virtual void applyNorthBoundary(std::vector<double>& f, 
                                     const LatticeModel& lattice, 
                                     const Geometry& geometry,
-                                    int x, int y, int z) = 0;
+                                    int id) = 0;
 
 };

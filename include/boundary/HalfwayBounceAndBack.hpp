@@ -17,14 +17,10 @@ public:
      * @param f Vector storing the particle distribution function 
      * @param lattice Constant reference to the lattice object 
      * @param geometry Constant reference to the geometry object
-     * @param x X-coordinate of the Solid node
-     * @param y Y-coordinate of the Solid node
-     * @param z Z-coordinate of the Solid node
      */
     void applyBoundary(std::vector<double>& f, 
                         const LatticeModel& lattice, 
-                        const Geometry& geometry,
-                        int x, int y, int z) override;
+                        const Geometry& geometry) override;
 
 private:
 
@@ -34,14 +30,12 @@ private:
      * @param f Vector storing the particle distribution function 
      * @param lattice Constant reference to the lattice object 
      * @param geometry Constant reference to the geometry object
-     * @param x X-coordinate of the Solid node
-     * @param y Y-coordinate of the Solid node
-     * @param z Z-coordinate of the Solid node
+     * @param id Index of the node
      */
     void applySouthBoundary(std::vector<double>& f, 
                             const LatticeModel& lattice, 
                             const Geometry& geometry,
-                            int x, int y, int z) override;
+                            int id) override;
 
     /**
      * @brief Applies boundary conditions at a Solid node located at the north boundary of the domain
@@ -49,13 +43,11 @@ private:
      * @param f Vector storing the particle distribution function 
      * @param lattice Constant reference to the lattice object 
      * @param geometry Constant reference to the geometry object
-     * @param x X-coordinate of the Solid node
-     * @param y Y-coordinate of the Solid node
-     * @param z Z-coordinate of the Solid node
+     * @param id Index of the node
      */
     void applyNorthBoundary(std::vector<double>& f, 
                             const LatticeModel& lattice, 
                             const Geometry& geometry,
-                            int x, int y, int z) override;
+                            int id) override;
 
 };

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cmath>
+#include <stdexcept>
 
 /**
  * @brief Abstract base class to Lattice Models definitions
@@ -105,7 +106,9 @@ public:
      * @param f Pointer to the array of distribution functions
      * @param m Pointer to the array where moments will be stored
      */
-    virtual void computeMoments(const double* f, double* m) const = 0;
+    virtual void computeMoments(const double* f, double* m) const {
+        throw std::runtime_error("computeMoments not implemented for this lattice");
+    }
 
     /**
      * @brief Computes equilibrium moments from the given moments.
@@ -113,7 +116,9 @@ public:
      * @param meq Pointer to the array where equilibrium moments will be stored
      * @param m Pointer to the array of current moments
      */
-    virtual void computeEquilibriumMoments(double* meq, const double* m) const = 0;
+    virtual void computeEquilibriumMoments(double* meq, const double* m) const {
+        throw std::runtime_error("computeEquilibriumMoments not implemented for this lattice");
+    }
 
     /**
      * @brief Reconstructs the distribution function from the moments.
@@ -121,7 +126,9 @@ public:
      * @param f Pointer to the array where the distribution function will be stored
      * @param m Pointer to the array of moments
      */
-    virtual void reconstructDistribution(double* f, const double* m) const = 0;
+    virtual void reconstructDistribution(double* f, const double* m) const {
+        throw std::runtime_error("reconstructDistribution not implemented for this lattice");
+    }
 
     /**
      * @brief Returns the relaxation matrix for the MRT collision model.
@@ -130,5 +137,7 @@ public:
      * @param numOfVel Number of discrete velocities
      * @return Vector containing the relaxation matrix
      */
-    virtual std::vector<double> relaxationMatrix(const double tau, const int numOfVel) const = 0;
+    virtual std::vector<double> relaxationMatrix(const double tau, const int numOfVel) const {
+        throw std::runtime_error("relaxationMatrix not implemented for this lattice");
+    }
 };

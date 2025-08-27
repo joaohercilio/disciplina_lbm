@@ -2,29 +2,32 @@
 
 void HalfwayBounceAndBack::applyBoundary(std::vector<double>& f, 
                                     const LatticeModel& lattice, 
-                                    const Geometry& geometry,
-                                    int x, int y, int z)
+                                    const Geometry& geometry)
 {
-    BoundaryType type = geometry.getBoundaryType(x, y, z);
+    for (int id = 0; id < geometry.getNumOfPoints(); ++id) {
 
-    if (type == BoundaryType::HalfwayBounceAndBackSouth) 
-    {
-        applySouthBoundary(f, lattice, geometry, x, y, z);
-    }
+        auto type = geometry.getBoundaryType(id);
 
-    else if (type == BoundaryType::HalfwayBounceAndBackNorth) 
-    {
-        applyNorthBoundary(f, lattice, geometry, x, y, z);
+        if (type == BoundaryType::HalfwayBounceAndBackSouth) 
+        {
+            applySouthBoundary(f, lattice, geometry, id);
+        }
+
+        else if (type == BoundaryType::HalfwayBounceAndBackNorth) 
+        {
+            applyNorthBoundary(f, lattice, geometry, id);
+        }
     }
 }                                       
 
 void HalfwayBounceAndBack::applySouthBoundary(std::vector<double>& f, 
                                        const LatticeModel& lattice, 
                                        const Geometry& geometry,
-                                       int x, int y, int z)
-{
-    int id = geometry.getIndex(x, y, z);
-
+                                       int id)
+{    
+    int x,y,z;
+    geometry.getCoords(id, x, y, z);
+    
     int nx = geometry.nx();
     int ny = geometry.ny();
     int nz = geometry.nz();
@@ -55,10 +58,11 @@ void HalfwayBounceAndBack::applySouthBoundary(std::vector<double>& f,
 void HalfwayBounceAndBack::applyNorthBoundary(std::vector<double>& f, 
                                        const LatticeModel& lattice, 
                                        const Geometry& geometry,
-                                       int x, int y, int z)
+                                       int id)
 {
-    int id = geometry.getIndex(x, y, z);
-
+    int x,y,z;
+    geometry.getCoords(id, x, y, z);
+    
     int nx = geometry.nx();
     int ny = geometry.ny();
     int nz = geometry.nz();

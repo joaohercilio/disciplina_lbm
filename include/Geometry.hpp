@@ -94,8 +94,17 @@ public:
      * @return BoundaryType of the node
      */
     BoundaryType getBoundaryType(int x, int y, int z) const {
-        int idx = getIndex(x, y, z);
-        return boundaryTypes_[idx];
+        int id = getIndex(x, y, z);
+        return boundaryTypes_[id];
+    }
+
+    /**
+     * @brief Returns the boundary type of a node.
+     * @param id Index of the node
+     * @return BoundaryType of the node
+     */
+    BoundaryType getBoundaryType(int id) const {
+        return boundaryTypes_[id];
     }
 
     /// Returns the number of nodes in X-direction

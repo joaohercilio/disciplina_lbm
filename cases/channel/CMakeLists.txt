@@ -14,17 +14,20 @@ endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
-set(SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/main.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/LBMDriver.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/lattice/D2Q9.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/lattice/D2Q5.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/lattice/D3Q19.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/collision/BGK.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/boundary/BounceAndBack.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Geometry.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Streaming.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../src/Output.cpp
-)
+file(GLOB_RECURSE SRC "${CMAKE_CURRENT_SOURCE_DIR}/../../src/*.cpp")
 
 add_executable(channel ${SRC})
+
+find_path(FFTW3_INCLUDE_DIR fftw3.h)
+find_library(FFTW3_LIBRARY NAMES fftw3)
+
+if (FFTW3_INCLUDE_DIR AND FFTW3_LIBRARY)
+    message(STATUS "FFTW3 found: ${FFTW3_LIBRARY}")
+    target_include_directories(channel PRIVATE ${FFTW3_INCLUDE_DIR})
+    target_link_libraries(channel PRIVATE ${FFTW3_LIBRARY})
+else()
+    message(FATAL_ERROR "FFTW3 not found")
+endif()
+
+find_package(ZLIB REQUIRED)
+target_link_libraries(channel PRIVATE ZLIB::ZLIB)

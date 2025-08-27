@@ -35,11 +35,9 @@ void writeVTI(const std::vector<double>& f, const LatticeModel& lattice, const G
     int numOfVel = lattice.getNumOfVel();
     int numOfPoints = geo.getNumOfPoints();
 
-    // Aloca vetores para densidade e velocidade
     std::vector<double> rho(numOfPoints, 0.0);
     std::vector<double> vel(3 * numOfPoints, 0.0);
 
-    // Calcula os campos macroscópicos
     for (int id = 0; id < numOfPoints; ++id) {
         int x, y, z;
         geo.getCoords(id, x, y, z);
