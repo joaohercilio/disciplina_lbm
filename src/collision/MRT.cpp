@@ -73,7 +73,7 @@ void MRT::initializeDensityField(std::vector<double>& f,
 
     double varrho;
 
-    do {
+    while (Istep < numberOfIterations) {
         varrho = 0.0;
 
         for (int id = 0; id < numOfPoints; id++)
@@ -108,10 +108,11 @@ void MRT::initializeDensityField(std::vector<double>& f,
         
         Istep++;
         if (Istep % 20 == 0) { std::cout << "\r\033[KInitalizing density field " << dots[p % 3] << std::flush; p++; }      
-
-    } while (Istep < numberOfIterations);
-
+    } 
+    
+    if(Istep > 0) {
     std::cout << "\r\033[KInitalizing density field... completed in "
-        << Istep << " iterations performed, "
-        << "final difference: " << varrho << std::endl;
+    << Istep << " iterations, "
+    << "final difference: " << varrho << std::endl;
+    }
 }

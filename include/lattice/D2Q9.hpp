@@ -27,5 +27,17 @@ public:
 
     /// \copydoc LatticeModel::computeEquilibrium
     void computeEquilibrium(double* feq, const double rho, const double vx, const double vy, double vz) const override;
+
+    /// \copydoc LatticeModel::computeMoments
+    void computeMoments(const double* f, double* m) const override;
+
+    /// \copydoc LatticeModel::computeEquilibriumMoments
+    void computeEquilibriumMoments(double* meq, const double* m) const override;
+
+    /// \copydoc LatticeModel::reconstructDistribution
+    void reconstructDistribution(double* f, const double* m) const override;
+
+    /// \copydoc LatticeModel::relaxationMatrix
+    std::vector<double> relaxationMatrix(const double tau, const int numOfVel) const override;
 };
 

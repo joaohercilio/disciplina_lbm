@@ -21,7 +21,7 @@ void initializeFields(std::vector<double>& f,
 
                     std::vector<double> feq(numOfVel, 0.0);
 
-                    lattice.computeEquilibrium(feq.data(), rho[id], u[id], u[id+1], u[id+2]); 
+                    lattice.computeEquilibrium(feq.data(), rho[id], u[3*id], u[3*id+1], u[3*id+2]); 
 
                     for (int k = 0; k < numOfVel; ++k) {
                         f[id*numOfVel + k] = feq[k];
