@@ -87,9 +87,9 @@ void MRT::initializeDensityField(std::vector<double>& f,
 
             lattice.computeMoments(mapF, m);
 
-            m[1] = u[geometry.getVelocityIndex(id, 0)];
-            m[2] = u[geometry.getVelocityIndex(id, 1)];
-            if(numOfDim == 3) { m[3] = u[geometry.getVelocityIndex(id, 2)]; }
+            m[1] = u[geometry.getVelocityIndex(id, 0)] * 1.0;
+            m[2] = u[geometry.getVelocityIndex(id, 1)] * 1.0;
+            if(numOfDim == 3) { m[3] = u[geometry.getVelocityIndex(id, 2)] * 1.0; }
 
             lattice.computeEquilibriumMoments(meq, m);
             lattice.computeMoments(mapF, m);
@@ -98,6 +98,10 @@ void MRT::initializeDensityField(std::vector<double>& f,
             {
                 m[i] = m[i] - s[i] * (m[i] - meq[i]);
             }
+
+            m[1] = u[geometry.getVelocityIndex(id, 0)] * 1.0;
+            m[2] = u[geometry.getVelocityIndex(id, 1)] * 1.0;
+            if(numOfDim == 3) { m[3] = u[geometry.getVelocityIndex(id, 2)] * 1.0; }
 
             lattice.reconstructDistribution(mapF, m);
 

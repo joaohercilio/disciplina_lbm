@@ -62,7 +62,7 @@ namespace user {
 
     // Number of iterations on the Density Field Initialization procedure
     int initializePressureIterations() {
-        return 0;
+        return 500;
     }
 
     // External forces
