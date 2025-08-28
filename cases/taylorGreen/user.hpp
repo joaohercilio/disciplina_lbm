@@ -24,6 +24,10 @@ namespace user {
         double Ly = 1.0;
         double U0 = 0.05;
 
+        int nx = geo.nx();
+        int ny = geo.ny();
+        int nz = geo.nz();
+
         std::vector <double> u (3 * geo.getNumOfPoints(), 0.0);
 
         double kx = 2*M_PI/Lx;
@@ -42,8 +46,8 @@ namespace user {
                 double vy  =  sqrt(kx/ky) * U0 * sin(kx * xi) * cos(ky * yi);
                 double p = -0.25 * U0*U0 * ( (ky/kx)*cos(2*kx*xi) + (kx/ky)*cos(2*ky*yi) );
                 
-                u[3*id] = vx;
-                u[3*id+1] = vy;
+                u[id] = vx;
+                u[id + nx*ny*nz] = vy;
             }
         }
 

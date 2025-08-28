@@ -19,7 +19,6 @@ void MRT::computeCollision(std::vector<double>& f,
                            const ColParamMap& colParams,
                            const std::vector<double>& force)
 {
-   
     int numOfVel = lattice.getNumOfVel();
     int numOfDim = lattice.getNumOfDim();
     int numPoints = geometry.getNumOfPoints();
@@ -61,6 +60,9 @@ void MRT::initializeDensityField(std::vector<double>& f,
     const char* dots[] = {".  ", ".. ", "..."};
 
     int numOfPoints = geometry.getNumOfPoints();
+    int nx = geometry.nx();
+    int ny = geometry.ny();
+    int nz = geometry.nz();
     int numOfVel = lattice.getNumOfVel();
     int numOfDim = lattice.getNumOfDim();
 
@@ -85,9 +87,9 @@ void MRT::initializeDensityField(std::vector<double>& f,
 
             lattice.computeMoments(mapF, m);
 
-            m[1] = u[id + 0];
-            m[2] = u[id + 1];
-            if(numOfDim == 3) { m[3] = u[id + 2]; }
+            m[1] = u[id];
+            m[2] = u[id + nx*ny*nz];
+            if(numOfDim == 3) { m[3] = u[id + 2*nx*ny*nz]; }
 
             lattice.computeEquilibriumMoments(meq, m);
             lattice.computeMoments(mapF, m);

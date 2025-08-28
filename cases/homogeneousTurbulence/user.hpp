@@ -37,7 +37,7 @@ namespace user {
         initVelocity(u, geo, kmin, kmax, A, m);
         
         double c = 1.0/5.0;
-        for (int i = 0; i < geo.getNumOfPoints()*3; i++) { u[i] *= c; }
+        for (int i = 0; i < 3 * geo.getNumOfPoints(); i++) { u[i] *= c; }
 
         return u; 
     }
@@ -49,7 +49,7 @@ namespace user {
 
     // Number of iterations on the Density Field Initialization procedure
     int initializePressureIterations() {
-        return 0;
+        return 1000;
     }
 
     // External forces
