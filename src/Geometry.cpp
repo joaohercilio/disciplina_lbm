@@ -24,3 +24,7 @@ void Geometry::getCoords(int index, int& x, int& y) const
     x = index % nx_;
 }
 
+int Geometry::getVelocityIndex(int id, int dir) const
+{
+    return id + dir * (nx_ * ny_ * nz_);
+}

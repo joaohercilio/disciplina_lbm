@@ -46,8 +46,9 @@ namespace user {
                 double vy  =  sqrt(kx/ky) * U0 * sin(kx * xi) * cos(ky * yi);
                 double p = -0.25 * U0*U0 * ( (ky/kx)*cos(2*kx*xi) + (kx/ky)*cos(2*ky*yi) );
                 
-                u[id] = vx;
-                u[id + nx*ny*nz] = vy;
+                u[geo.getVelocityIndex(id, 0)] = vx;
+                u[geo.getVelocityIndex(id, 1)] = vy;
+                u[geo.getVelocityIndex(id, 2)] = 0.0;
             }
         }
 

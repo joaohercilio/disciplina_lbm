@@ -147,4 +147,20 @@ public:
      * @param y Reference to store Y-coordinate
      */
     void getCoords(int index, int& x, int& y) const;
+
+    /**
+     * @brief Returns the velocity index for the direction specified.
+     * @param index Linear node index
+     * @param dir Desired direction (x, y and z)
+     * 
+     *   dir = 0 -> u_x
+     * 
+     *   dir = 1 -> u_y
+     * 
+     *   dir = 2 -> u_z
+     *
+     * @return The index in the velocity vector
+     */
+    int getVelocityIndex(int index, int dir) const;
+
 };

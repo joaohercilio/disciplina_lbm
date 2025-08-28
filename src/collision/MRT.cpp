@@ -87,9 +87,9 @@ void MRT::initializeDensityField(std::vector<double>& f,
 
             lattice.computeMoments(mapF, m);
 
-            m[1] = u[id];
-            m[2] = u[id + nx*ny*nz];
-            if(numOfDim == 3) { m[3] = u[id + 2*nx*ny*nz]; }
+            m[1] = u[geometry.getVelocityIndex(id, 0)];
+            m[2] = u[geometry.getVelocityIndex(id, 1)];
+            if(numOfDim == 3) { m[3] = u[geometry.getVelocityIndex(id, 2)]; }
 
             lattice.computeEquilibriumMoments(meq, m);
             lattice.computeMoments(mapF, m);
