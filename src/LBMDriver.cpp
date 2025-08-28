@@ -12,7 +12,7 @@ public:
     void run() override 
     {
         user::print();
-
+        
         auto& f_in  = f1_;
         auto& f_out = f2_;
 
@@ -25,11 +25,11 @@ public:
 
         timer.start("Initialization");
         initializeFields(f_in, *lattice_, geometry_, colParams, u0, rho0);
-        writeTSV(f_in, *lattice_, geometry_, "../outputTSV", 66666666);
+        //writeTSV(f_in, *lattice_, geometry_, "../outputTSV", 66666666);
         collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, user::externalForce(), user::initializePressureIterations());
         timer.stop("Initialization");
 
-        writeTSV(f_in, *lattice_, geometry_, "../outputTSV", 0);
+        //writeTSV(f_in, *lattice_, geometry_, "../outputTSV", 0);
         writeVTI(f_in, *lattice_, geometry_, "../outputVTI", 0);
 
         for (int t = 1; t <= user::totalSteps(); ++t) {
@@ -46,7 +46,7 @@ public:
             boundary_->applyBoundary(f_out, *lattice_, geometry_);
             timer.stop("Boundary");
 
-            if ( t % user::writeInterval() == 0) writeTSV(f_out, *lattice_, geometry_, "../outputTSV", t);
+            //if ( t % user::writeInterval() == 0) writeTSV(f_out, *lattice_, geometry_, "../outputTSV", t);
             if ( t % user::writeInterval() == 0) writeVTI(f_out, *lattice_, geometry_, "../outputVTI", t);
 
             if ( t % 50 == 0 ) {std::cout << t << std::endl;}
