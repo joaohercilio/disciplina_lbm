@@ -30,8 +30,8 @@ void writeVTI(const std::vector<double>& f, const LatticeModel& lattice, const G
     std::sprintf(filename, "%s/output_%07d.vti", path.c_str(), t);
 
     int nx = geo.nx();
-    int ny = geo.nx();
-    int nz = geo.nx();
+    int ny = geo.ny();
+    int nz = geo.nz();
     int numOfVel = lattice.getNumOfVel();
     int numOfPoints = geo.getNumOfPoints();
 
