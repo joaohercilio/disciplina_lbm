@@ -56,13 +56,40 @@ namespace user {
     }
 
     std::vector<double> initialDensity (const Geometry& geo) {
+
         std::vector <double> rho (geo.getNumOfPoints(), 1.0);
+
+        double Lx = 1.0;
+        double Ly = 1.0;
+        double U0 = 0.05;
+
+        int nx = geo.nx();
+        int ny = geo.ny();
+        int nz = geo.nz();
+
+        double kx = 2*M_PI/Lx;
+        double ky = 2*M_PI/Ly;
+
+        for ( int y = 0; y < geo.ny(); y++ )
+        {
+            for ( int x = 0; x < geo.nx(); x++ )
+            {		
+                int id = geo.getIndex(x, y, 0);
+
+                double xi = Lx / geo.nx() * (x + 0.5);
+                double yi = Ly / geo.ny() * (y + 0.5);
+
+                double p = -0.5 * U0*U0 * cos( kx*(xi + yi) ) * cos( kx*(xi - yi) );
+
+                //rho[id] = 1.0 + 3.0 * p;
+            }
+        }
         return rho;
     }
 
     // Number of iterations on the Density Field Initialization procedure
     int initializePressureIterations() {
-        return 0;
+        return 10000;
     }
 
     // External forces
@@ -87,7 +114,7 @@ namespace user {
     enum class OutputType { TSV, VTI, BOTH, NONE };
 
     OutputType outputType() {
-        return OutputType::BOTH;  // <- usuário troca aqui
+        return OutputType::BOTH;  
     }
     
     int writeInterval() {

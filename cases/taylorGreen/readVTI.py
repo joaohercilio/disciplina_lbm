@@ -21,8 +21,7 @@ def processVTI(directory, P2_list, K_list):
         vel = vtk_to_numpy(data.GetPointData().GetArray("Velocity")) # shape = (Npoints, 3)
         density = vtk_to_numpy(data.GetPointData().GetArray('Density'))
                 
-        pressure = density / 3.0
-
+        pressure = (density - 1.0) / 3.0 
         integrand_sum_pressure = 0.0
         integrand_sum_energy = 0.0
 
@@ -38,31 +37,37 @@ def processVTI(directory, P2_list, K_list):
                 cos2 = np.cos(kL * (x - y))
 
                 integrand_sum_pressure += pressure[k] * cos1 * cos2
-
                 integrand_sum_energy += vel[k][0]**2 + vel[k][1]**2
 
         P2_list.append(-16.0 / (U0**2 * N**2) * integrand_sum_pressure)
         K_list.append(2.0 / (U0**2 * N**2) * integrand_sum_energy)
 
 P2_iterated = []
-P2_non_iterated = []
+P2_constant = []
+P2_calculated = []
 K_iterated = []
-K_non_iterated = []
+K_constant = []
+K_calculated = []
 
 processVTI("iterated/", P2_iterated, K_iterated)
-processVTI("constant/", P2_non_iterated, K_non_iterated)
+processVTI("constant/", P2_constant, K_constant)
+processVTI("calculated/", P2_calculated, K_calculated)
 
 time = np.linspace(0,200, len(P2_iterated))
 
-plt.plot(time, P2_iterated/P2_iterated[0], label = "iterated")
-plt.plot(time, P2_non_iterated/P2_iterated[0], label = "constant")
-plt.xlim(0,len(P2_iterated))
+plt.figure(figsize=(6,6))
+plt.plot(time, P2_iterated/P2_calculated[0], label = "iterated")
+plt.plot(time, P2_constant/P2_calculated[0], label = "constant")
+plt.plot(time, P2_calculated/P2_calculated[0], label = "calculated")
+plt.xlim(0,200)
 plt.ylim(0,2)
 plt.legend()
 plt.show()
 
+plt.figure(figsize=(6,6))
 plt.plot(time, K_iterated/K_iterated[0], label = "iterated")
-plt.plot(time, K_non_iterated/K_non_iterated[0], label = "constant")
+plt.plot(time, K_constant/K_constant[0], label = "constant")
+plt.plot(time, K_calculated/K_calculated[0], label = "calculated")
 plt.xlim(0,60)
 plt.ylim(0.966,1)
 plt.legend()

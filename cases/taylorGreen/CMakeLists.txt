@@ -31,3 +31,8 @@ endif()
 
 find_package(ZLIB REQUIRED)
 target_link_libraries(taylorGreen PRIVATE ZLIB::ZLIB)
+
+find_package(OpenMP REQUIRED)
+if (OpenMP_CXX_FOUND)
+    target_link_libraries(taylorGreen PRIVATE OpenMP::OpenMP_CXX)
+endif()
