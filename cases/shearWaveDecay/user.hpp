@@ -77,6 +77,10 @@ namespace user {
         return maxSteps;
     }
 
+    enum class OutputType { TSV, VTI, BOTH, NONE };
+    OutputType outputType() {
+        return OutputType::BOTH;  
+    }
     // Output options
     int writeInterval() {
         return maxSteps / 10;

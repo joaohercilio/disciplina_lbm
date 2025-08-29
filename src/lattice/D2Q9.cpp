@@ -57,15 +57,15 @@ void D2Q9::computeMoments(const double* f, double* m) const {
     m[5] = -2*f[1] + 2*f[2] + f[5] - f[6] - f[7] + f[8];
     m[6] = -2*f[3] + 2*f[4] + f[5] - f[6] + f[7] - f[8];
     m[7] = f[1] + f[2] - f[3] - f[4];
-    m[8] = f[5] + f[6] - f[7] - f[8];	
+    m[8] = f[5] + f[6] - f[7] - f[8];
 }
 
 void D2Q9::computeEquilibriumMoments(double* meq, const double* m) const {
 
     double rho = m[0];
 
-    double ux = m[1];
-    double uy = m[2];
+    double ux = m[1] / rho;
+    double uy = m[2] / rho;
     
     double ux2 = ux * ux;
     double uy2 = uy * uy;

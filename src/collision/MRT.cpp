@@ -26,6 +26,7 @@ void MRT::computeCollision(std::vector<double>& f,
     const double tau = colParams.find("tau") -> second;
     std::vector<double> s = lattice.relaxationMatrix(tau, numOfVel);
 
+    #pragma omp parallel for
     for (int id = 0; id < numPoints; ++id) {
         if (geometry.getNode(id) == NodeType::Fluid) {
 
@@ -74,10 +75,10 @@ void MRT::initializeDensityField(std::vector<double>& f,
     int Istep = 0;
 
     double varrho;
-
     while (Istep < numberOfIterations) {
         varrho = 0.0;
 
+        #pragma omp parallel for reduction(+:varrho)
         for (int id = 0; id < numOfPoints; id++)
         {
             double* mapF = f.data() + id*numOfVel;
@@ -86,23 +87,13 @@ void MRT::initializeDensityField(std::vector<double>& f,
             double meq[numOfVel];
 
             lattice.computeMoments(mapF, m);
-
-            m[1] = u[geometry.getVelocityIndex(id, 0)] * 1.0;
-            m[2] = u[geometry.getVelocityIndex(id, 1)] * 1.0;
-            if(numOfDim == 3) { m[3] = u[geometry.getVelocityIndex(id, 2)] * 1.0; }
-
             lattice.computeEquilibriumMoments(meq, m);
-            lattice.computeMoments(mapF, m);
 
             for (int i = 1 + numOfDim; i < numOfVel; i++) 
             {
                 m[i] = m[i] - s[i] * (m[i] - meq[i]);
             }
-
-            m[1] = u[geometry.getVelocityIndex(id, 0)] * 1.0;
-            m[2] = u[geometry.getVelocityIndex(id, 1)] * 1.0;
-            if(numOfDim == 3) { m[3] = u[geometry.getVelocityIndex(id, 2)] * 1.0; }
-
+            
             lattice.reconstructDistribution(mapF, m);
 
             varrho += fabs(drhoOld[id] - m[0]);
@@ -112,6 +103,21 @@ void MRT::initializeDensityField(std::vector<double>& f,
         performStreaming(f, fn, lattice, geometry);
         std::swap(f, fn);
         
+        #pragma omp parallel for
+        for (int id = 0; id < numOfPoints; id++)
+        {
+            double* mapF = f.data() + id*numOfVel;
+            double m[numOfVel];
+
+            lattice.computeMoments(mapF, m);
+            
+            m[1] = u[geometry.getVelocityIndex(id, 0)] * m[0];
+            m[2] = u[geometry.getVelocityIndex(id, 1)] * m[0];
+            if(numOfDim == 3) { m[3] = u[geometry.getVelocityIndex(id, 2)] * m[0]; }
+            
+            lattice.reconstructDistribution(mapF, m);
+        }
+
         Istep++;
         if (Istep % 20 == 0) { std::cout << "\r\033[KInitalizing density field " << dots[p % 3] << std::flush; p++; }      
     } 

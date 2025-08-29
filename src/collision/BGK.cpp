@@ -28,6 +28,7 @@ void BGK::computeCollision(std::vector<double>& f,
     int numOfVel = lattice.getNumOfVel();
     int numPoints = geometry.getNumOfPoints();
 
+    #pragma omp parallel for
     for (int i = 0; i < numPoints; ++i) {
         if (geometry.getNode(i) == NodeType::Fluid) {
 

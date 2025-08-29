@@ -8,6 +8,7 @@ L = 1
 kL = 2 * np.pi / L
 U0 = 0.05
 nu = 0.002
+N = 32
 
 def processVTI(directory, P2_list, K_list):
     vti_files = sorted([f for f in os.listdir(directory) if f.endswith(".vti")])
@@ -19,9 +20,7 @@ def processVTI(directory, P2_list, K_list):
 
         vel = vtk_to_numpy(data.GetPointData().GetArray("Velocity")) # shape = (Npoints, 3)
         density = vtk_to_numpy(data.GetPointData().GetArray('Density'))
-        
-        N = int(np.sqrt(len(density)))
-        
+                
         pressure = density / 3.0
 
         integrand_sum_pressure = 0.0
@@ -64,7 +63,7 @@ plt.show()
 
 plt.plot(time, K_iterated/K_iterated[0], label = "iterated")
 plt.plot(time, K_non_iterated/K_non_iterated[0], label = "constant")
-plt.xlim(0,200)
-plt.ylim(0,1)
+plt.xlim(0,60)
+plt.ylim(0.966,1)
 plt.legend()
 plt.show()

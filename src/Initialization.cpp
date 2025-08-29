@@ -8,38 +8,29 @@ void initializeFields(std::vector<double>& f,
                         const std::vector<double>& rho)
 {
     int numOfVel = lattice.getNumOfVel();
-    int nx = geometry.nx();
-    int ny = geometry.ny();
-    int nz = geometry.nz();
+    int numOfPoints = geometry.getNumOfPoints();
 
-    for (int z = 0; z < nz; ++z) {
-        for (int y = 0; y < ny; ++y) {
-            for (int x = 0; x < nx; ++x) {
-                if (geometry.getNode(x, y, z) == NodeType::Fluid) {
+    #pragma omp parallel for
+    for (int id = 0; id < numOfPoints; ++id) {
+        if (geometry.getNode(id) == NodeType::Fluid) {
 
-                    int id = geometry.getIndex(x,y,z);
+            std::vector<double> feq(numOfVel, 0.0);
 
-                    std::vector<double> feq(numOfVel, 0.0);
+            lattice.computeEquilibrium(feq.data(), rho[id], u[geometry.getVelocityIndex(id, 0)], 
+                                                            u[geometry.getVelocityIndex(id, 1)], 
+                                                            u[geometry.getVelocityIndex(id, 2)]); 
 
-                    lattice.computeEquilibrium(feq.data(), rho[id], u[geometry.getVelocityIndex(id, 0)], 
-                                                                    u[geometry.getVelocityIndex(id, 1)], 
-                                                                    u[geometry.getVelocityIndex(id, 2)]); 
+            for (int k = 0; k < numOfVel; ++k) {
+                f[id*numOfVel + k] = feq[k];
+            }
 
-                    for (int k = 0; k < numOfVel; ++k) {
-                        f[id*numOfVel + k] = feq[k];
-                    }
+        } else {
+            // Initialize Solid Nodes with zero velocity and density
 
-                } else {
-
-                    // Initialize Solid Nodes with zero velocity and density
-
-                    std::vector<double> feq(numOfVel, 0.0);
-                    lattice.computeEquilibrium(feq.data(), 1.0, 0.0, 0.0, 0.0);
-                    int id = geometry.getIndex(x, y, z);
-                    for (int k = 0; k < numOfVel; ++k) {
-                        f[id*numOfVel + k] = feq[k];
-                    }
-                }
+            std::vector<double> feq(numOfVel, 0.0);
+            lattice.computeEquilibrium(feq.data(), 1.0, 0.0, 0.0, 0.0);
+            for (int k = 0; k < numOfVel; ++k) {
+                f[id*numOfVel + k] = feq[k];
             }
         }
     }

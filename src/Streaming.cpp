@@ -12,6 +12,7 @@ void performStreaming(std::vector<double>& f, std::vector<double>& fn, const Lat
     int ny = geometry.ny();
     int nz = geometry.nz();
 
+    #pragma omp parallel for
     for (int id = 0; id < geometry.getNumOfPoints(); id++) {
         if (geometry.getNode(id) == NodeType::Fluid) {
             

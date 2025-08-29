@@ -62,7 +62,7 @@ namespace user {
 
     // Number of iterations on the Density Field Initialization procedure
     int initializePressureIterations() {
-        return 500;
+        return 0;
     }
 
     // External forces
@@ -84,6 +84,12 @@ namespace user {
     }
 
     // Output options
+    enum class OutputType { TSV, VTI, BOTH, NONE };
+
+    OutputType outputType() {
+        return OutputType::BOTH;  // <- usuário troca aqui
+    }
+    
     int writeInterval() {
         return 1; 
     }

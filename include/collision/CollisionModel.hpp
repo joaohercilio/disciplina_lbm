@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include <stdexcept>
+#include <omp.h>
 
 /**
  * @brief Map that stores collision parameters.

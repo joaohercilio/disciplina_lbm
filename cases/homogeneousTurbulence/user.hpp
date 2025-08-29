@@ -13,7 +13,7 @@ void uHat(double kx, double ky, double kz, complex<double> vHat[3], double kmin,
 
 namespace user {
     
-    const int N = 32;
+    const int N = 128;
 
     using LatticeModel = D3Q19; 
 
@@ -49,7 +49,7 @@ namespace user {
 
     // Number of iterations on the Density Field Initialization procedure
     int initializePressureIterations() {
-        return 1000;
+        return 5000;
     }
 
     // External forces
@@ -67,12 +67,17 @@ namespace user {
 
     // Total number of time steps
     int totalSteps () {
-        return 100;
+        return 100000;
     }
 
     // Output options
+    enum class OutputType { TSV, VTI, BOTH, NONE };
+
+    OutputType outputType() {
+        return OutputType::VTI;  
+    }
     int writeInterval() {
-        return 1; 
+        return 10; 
     }
 
     void print() {}
