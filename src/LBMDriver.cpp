@@ -5,8 +5,7 @@ public:
     LBMSimulation() : Simulation (
             std::make_unique<user::LatticeModel>(), 
             std::make_unique<user::CollisionModel>(),
-            user::problemGeometry(),
-            std::make_unique<user::BoundaryModel>()
+            user::problemGeometry()
         ) {}
 
     void run() override 
@@ -16,9 +15,6 @@ public:
         auto& f_in  = f1_;
         auto& f_out = f2_;
 
-        std::vector<double> u0 = user::initialVelocity(geometry_);
-        std::vector<double> rho0 = user::initialDensity(geometry_);
-
         const auto colParams = collision_ -> prepareColParams(user::colParams());
 
         Timer timer;
@@ -26,12 +22,12 @@ public:
         auto outputType = user::outputType();
 
         timer.start("Initialization");
+        std::vector<double> u0 = user::initialVelocity(geometry_);
+        std::vector<double> rho0 = user::initialDensity(geometry_);
         initializeFields(f_in, *lattice_, geometry_, colParams, u0, rho0);
-
         //writeTSV(f_in, *lattice_, geometry_, "../outputTSV", 66666666);
         //writeVTI(f_in, *lattice_, geometry_, "../outputVTI", 66666666);
-        
-        collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, user::externalForce(), user::initializePressureIterations());
+        //collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, user::externalForce(), user::initializePressureIterations());
         timer.stop("Initialization");
 
         if (outputType == user::OutputType::TSV || outputType == user::OutputType::BOTH)
@@ -49,10 +45,6 @@ public:
             timer.start("Streaming");
             performStreaming(f_in, f_out, *lattice_, geometry_);
             timer.stop("Streaming");
-
-            timer.start("Boundary");
-            boundary_->applyBoundary(f_out, *lattice_, geometry_);
-            timer.stop("Boundary");
 
             if (t % user::writeInterval() == 0) {
                 if (outputType == user::OutputType::TSV || outputType == user::OutputType::BOTH)

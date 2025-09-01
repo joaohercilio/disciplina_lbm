@@ -10,8 +10,6 @@
 #include "lattice/D3Q19.hpp"
 #include "collision/BGK.hpp"
 #include "collision/MRT.hpp"
-#include "boundary/HalfwayBounceAndBack.hpp"
-#include "boundary/Periodic.hpp"
 #include "Geometry.hpp"
 #include "Initialization.hpp"
 #include "Streaming.hpp"
@@ -32,7 +30,6 @@ protected:
     std::unique_ptr<LatticeModel> lattice_;     ///< Pointer to the lattice model
     std::unique_ptr<CollisionModel> collision_; ///< Pointer to the collision model
     Geometry geometry_;                         ///< Geometry of the computational domain
-    std::unique_ptr<BoundaryModel> boundary_;   ///< Pointer to the boundary model
     std::vector<double> f1_;                    ///< Distribution function at current step
     std::vector<double> f2_;                    ///< Distribution function at next step
 
@@ -50,12 +47,10 @@ public:
      */
     Simulation(std::unique_ptr<LatticeModel> lattice,
                std::unique_ptr<CollisionModel> collision,
-               Geometry geometry,
-               std::unique_ptr<BoundaryModel> boundary)
+               Geometry geometry)
 
         : lattice_(std::move(lattice)),
           collision_(std::move(collision)),
-          boundary_(std::move(boundary)),
           geometry_(std::move(geometry))
     {
     const int totalPoints = geometry_.getNumOfPoints();

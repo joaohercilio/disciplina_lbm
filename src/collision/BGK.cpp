@@ -40,9 +40,9 @@ void BGK::computeCollision(std::vector<double>& f,
 
             double feq[numOfVel];
 
-            vx += tau*force[0] / rho;
-            vy += tau*force[1] / rho;
-            vz += tau*force[2] / rho;
+            vx += tau*force[0] ;
+            vy += tau*force[1] ;
+            vz += tau*force[2] ;
 
             lattice.computeEquilibrium( feq, rho, vx, vy, vz );
 

@@ -27,8 +27,14 @@ void performStreaming(std::vector<double>& f, std::vector<double>& fn, const Lat
                 int zn = (z + cz[k] + nz) % nz;
 
                 int idn = geometry.getIndex(xn, yn, zn);
-
-                fn[idn * numOfVel + k] = f[id * numOfVel + k];
+                
+                // Halfway bounce and back
+                if (geometry.getNode(idn) == NodeType::Solid) {
+                    int k_opposite = (k == 0) ? 0 : (k % 2 == 1) ? k + 1 : k - 1;
+                    fn[id * numOfVel + k_opposite] = f[id * numOfVel + k];
+                } else {
+                    fn[idn * numOfVel + k] = f[id * numOfVel + k];
+                }
             }        
         }
     }

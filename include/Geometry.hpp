@@ -1,7 +1,5 @@
 #pragma once
 
-#include "boundary/BoundaryModel.hpp"
-
 #include <vector>
 #include <cstdint>
 
@@ -15,8 +13,8 @@ enum class NodeType : uint8_t { Solid, Fluid };
 /**
  * @brief Class that defines the problem geometry.
  *
- * This class stores the dimensions of the computational domain, the type of each node
- * (solid or fluid), and the boundary type for each node. 
+ * This class stores the dimensions of the computational domain and the type of each node
+ * (solid or fluid_
  */
 class Geometry {
     
@@ -25,13 +23,12 @@ private:
     int ny_; ///< Number of nodes in y-direction
     int nz_; ///< Number of nodes in z-direction
     std::vector<NodeType> nodes_; ///< Vector storing node types (Solid/Fluid)
-    std::vector<BoundaryType> boundaryTypes_; ///< Vector storing boundary types for each node
 
 public:
     /**
      * @brief Constructs a Geometry object with given dimensions.
      *
-     * Initially, all nodes are set to Fluid and all boundary types are None.
+     * Initially, all nodes are set to Fluid.
      *
      * @param nx Number of nodes in X-direction
      * @param ny Number of nodes in Y-direction
@@ -39,8 +36,7 @@ public:
      */
     Geometry(int nx, int ny, int nz) : 
         nx_(nx), ny_(ny), nz_(nz),
-        nodes_(nx * ny * nz, NodeType::Fluid),
-        boundaryTypes_(nx * ny * nz, BoundaryType::None) {}
+        nodes_(nx * ny * nz, NodeType::Fluid) {}
 
     /**
      * @brief Marks a node as Solid.
@@ -73,39 +69,6 @@ public:
      * @return NodeType of the specified node
      */
     NodeType getNode(int i) const { return nodes_[i]; }
-
-    /**
-     * @brief Sets the boundary type of a node.
-     * @param x X-coordinate
-     * @param y Y-coordinate
-     * @param z Z-coordinate
-     * @param type BoundaryType to assign
-     */
-    void setBoundaryType(int x, int y, int z, BoundaryType type) {
-        int idx = getIndex(x, y, z);
-        boundaryTypes_[idx] = type;
-    }
-
-    /**
-     * @brief Returns the boundary type of a node.
-     * @param x X-coordinate
-     * @param y Y-coordinate
-     * @param z Z-coordinate
-     * @return BoundaryType of the node
-     */
-    BoundaryType getBoundaryType(int x, int y, int z) const {
-        int id = getIndex(x, y, z);
-        return boundaryTypes_[id];
-    }
-
-    /**
-     * @brief Returns the boundary type of a node.
-     * @param id Index of the node
-     * @return BoundaryType of the node
-     */
-    BoundaryType getBoundaryType(int id) const {
-        return boundaryTypes_[id];
-    }
 
     /// Returns the number of nodes in X-direction
     int nx() const { return nx_; }
