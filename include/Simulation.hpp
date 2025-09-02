@@ -2,8 +2,6 @@
 
 #include <memory>
 #include <cmath>
-#include <iostream>
-#include <chrono>
 
 #include "lattice/D2Q5.hpp"
 #include "lattice/D2Q9.hpp"
@@ -15,6 +13,7 @@
 #include "Streaming.hpp"
 #include "Output.hpp"
 #include "Timer.hpp"
+#include "Logger.hpp"
 
 /**
  * @brief Abstract base class representing a general LBM simulation.

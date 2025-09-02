@@ -9,31 +9,33 @@ public:
         ) {}
 
     void run() override 
-    {
-        user::print();
-        
+    {        
         auto& f_in  = f1_;
         auto& f_out = f2_;
 
-        const auto colParams = collision_ -> prepareColParams(user::colParams());
+        Logger logger;
+        Timer timer(logger);
 
-        Timer timer;
+        auto logParams = user::userLogParams();
+        logger.logUserConfig("USER CONFIGURATION SUMMARY", logParams);
 
         auto outputType = user::outputType();
+
+        const auto colParams = collision_ -> prepareColParams(user::colParams());
 
         timer.start("Initialization");
         std::vector<double> u0 = user::initialVelocity(geometry_);
         std::vector<double> rho0 = user::initialDensity(geometry_);
         initializeFields(f_in, *lattice_, geometry_, colParams, u0, rho0);
-        //writeTSV(f_in, *lattice_, geometry_, "../outputTSV", 66666666);
-        //writeVTI(f_in, *lattice_, geometry_, "../outputVTI", 66666666);
-        //collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, user::externalForce(), user::initializePressureIterations());
+        collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, user::externalForce(), user::initializePressureIterations(), logger);
         timer.stop("Initialization");
 
-        if (outputType == user::OutputType::TSV || outputType == user::OutputType::BOTH)
+        logger.logMessage("Time steps\n");
+
+        if (outputType == OutputType::TSV || outputType == OutputType::BOTH)
             writeTSV(f_in, *lattice_, geometry_, "../outputTSV", 0);
 
-        if (outputType == user::OutputType::VTI || outputType == user::OutputType::BOTH)
+        if (outputType == OutputType::VTI || outputType == OutputType::BOTH)
             writeVTI(f_in, *lattice_, geometry_, "../outputVTI", 0);
 
         for (int t = 1; t <= user::totalSteps(); ++t) {
@@ -47,17 +49,19 @@ public:
             timer.stop("Streaming");
 
             if (t % user::writeInterval() == 0) {
-                if (outputType == user::OutputType::TSV || outputType == user::OutputType::BOTH)
+                if (outputType == OutputType::TSV || outputType == OutputType::BOTH)
                     writeTSV(f_out, *lattice_, geometry_, "../outputTSV", t);
 
-                if (outputType == user::OutputType::VTI || outputType == user::OutputType::BOTH)
+                if (outputType == OutputType::VTI || outputType == OutputType::BOTH)
                     writeVTI(f_out, *lattice_, geometry_, "../outputVTI", t);
             }
-            if ( t % 50 == 0 ) {std::cout << t << std::endl;}
+
+            logger.logStep(t,user::totalSteps());
 
             std::swap(f_in, f_out);
         }
 
+        logger.endLine();
         timer.report();
 
     }

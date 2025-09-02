@@ -1,7 +1,6 @@
 #include "Simulation.hpp"
 
-
-// ----- PROBLEM SETUP (the user should edit this namespace) ----- //
+// ----- PROBLEM SETUP ----- //
 
 namespace user {
    
@@ -13,12 +12,10 @@ namespace user {
         return {{"tau", tau}};
     }
 
-    // Problem parameters
-    
     const int N             = 64 + 2; // 2 solid nodes at the boundaries
     const int TPHY          = 10000;
     const double LPHY       = 1.0;
-    const double UPHY       = 0.005;
+    const double UPHY       = 0.001;
     const double NUPHY      = 1e-3;
     const double REPHY      = (UPHY * LPHY)/NUPHY;
     const double FPHY       = (8 * NUPHY * UPHY) / (LPHY * LPHY);
@@ -31,17 +28,20 @@ namespace user {
     const double TLATT      = int(TPHY / delta);
     const double RELATT     = N * ULATT / NULATT;
 
-    inline void print() {
-        std::cout << "N = " << N - 2 << std::endl;
-        std::cout << "Viscosity = " << NULATT << std::endl;
-        std::cout << "h = " << h << std::endl;
-        std::cout << "delta = " << delta << std::endl;
-        std::cout << "Umax = " << ULATT << std::endl;
-        std::cout << "Re = " << RELATT << std::endl;
-        std::cout << "Ma = " << ULATT/ (1.0/sqrt(3.0));
-    }
-
-    // Initial conditions
+    // User configuration summary
+    inline std::vector<std::pair<std::string, double>> userLogParams() {
+        return {
+            {"N", N},
+            {"Viscosity", NULATT},
+            {"h", h},
+            {"delta", delta},
+            {"Umax", ULATT},
+            {"F", FLATT},
+            {"Re", RELATT},
+            {"Ma", ULATT/(1/sqrt(3))}
+        };
+    }    
+    
     std::vector<double> initialVelocity(const Geometry& geo)
     {
         std::vector<double> u (3*geo.getNumOfPoints(), 0.0);
@@ -53,35 +53,32 @@ namespace user {
         return rho;
     }
 
-    // External forces
     std::vector<double> externalForce()
     {
         return {FLATT, 0.0, 0.0};
     }
 
-    // Geometry definition and boundary conditions
     Geometry problemGeometry() {
         Geometry geo(1, N, 1);
-
         geo.setSolid(0, 0, 0);
         geo.setSolid(0, N-1, 0);
-        
         return geo;
     }
-
-    enum class OutputType { TSV, VTI, BOTH, NONE };
 
     OutputType outputType() {
         return OutputType::TSV;  
     }
 
-    // Total number of time steps
     int totalSteps () {
-        return TLATT;
+        return 1000000;
     }
 
-    // Output options
     int writeInterval() {
         return TLATT; 
+    }
+
+    int initializePressureIterations()
+    {
+        return 0;
     }
 }

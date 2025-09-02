@@ -1,52 +1,60 @@
 #include "Simulation.hpp"
 
-// ----- PROBLEM SETUP (the user should edit this namespace) ----- //
+// ----- PROBLEM SETUP  ----- //
 
 namespace user {
     
-    // Choose Lattice Model
     using LatticeModel = D2Q9; 
 
-    // Choose Collision Model and set collision parameters
     using CollisionModel = BGK;
     double tau = 0.8;
     ColParamMap colParams() {
         return {{"tau", tau}};
     }
     
-    // Initial conditions
-    std::vector<double> initialVelocity(int x, int y, int z);
+    int N = 10;
 
-    double initialDensity (int x, int y, int z) {
-        return 1.0; // Uniform density
+    std::vector<double> initialVelocity(const Geometry& geo) {
+        std::vector <double> u (3 * geo.getNumOfPoints(), 0.0);
+        return u;
     }
 
-    // External forces
+    std::vector<double> initialDensity (const Geometry& geo) {
+        std::vector <double> rho (geo.getNumOfPoints(), 1.0);
+        return rho;
+    }
+    
+    int initializePressureIterations() {
+        return 0;
+    }
+
+    Geometry problemGeometry() {
+        Geometry geo(N, N, N);
+        return geo;
+    }
+
     std::vector<double> externalForce()
     {
         return {0.0, 0.0, 0.0};
     }
-
-    // Geometry definition and boundary conditions
-    using BoundaryModel = HalfwayBounceAndBack;
-    Geometry problemGeometry() {
-        Geometry geo(10, 10, 10);
-        //geo.setSolid(0, 0, 0);
-
-        // Boundary conditions
-        geo.setBoundaryType(0, 0, 0, BoundaryType::HalfwayBounceAndBackSouth);
-        geo.setBoundaryType(0, 7, 0, BoundaryType::HalfwayBounceAndBackNorth);
-        
-        return geo;
-    }
-
-    // Total number of time steps
+    
     int totalSteps () {
-        return 10;
+        return 0;
     }
 
-    // Output options
-    int writeInterval() {
-        return 2; // Write output every 2 steps
+    OutputType outputType() {
+        return OutputType::BOTH;  
     }
+
+    int writeInterval() {
+        return 0;
+    }
+
+    inline std::vector<std::pair<std::string, double>> userLogParams() {
+        return {
+            {"N", N},
+            {"Viscosity", (1.0/3.0) * (tau - 0.5)}
+        };
+    }    
+
 }

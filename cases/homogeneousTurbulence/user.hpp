@@ -17,14 +17,19 @@ namespace user {
 
     using LatticeModel = D3Q19; 
 
-    // Choose Collision Model and set collision parameters
     using CollisionModel = MRT;
     double tau = 0.8;
     ColParamMap colParams() {
         return {{"tau", tau}};
     }
     
-    // Initial conditions
+    inline std::vector<std::pair<std::string, double>> userLogParams() {
+        return {
+            {"N", N},
+            {"Viscosity", (1.0/3.0) * (tau - 0.5)}
+        };
+    }    
+
     std::vector<double> initialVelocity(const Geometry& geo)
     {
         double kmin = 3;
@@ -47,31 +52,23 @@ namespace user {
         return rho;
     }
 
-    // Number of iterations on the Density Field Initialization procedure
     int initializePressureIterations() {
         return 5000;
     }
 
-    // External forces
     std::vector<double> externalForce()
     {
         return {0.0, 0.0, 0.0};
     }
 
-    // Geometry definition and boundary conditions
-    using BoundaryModel = PeriodicBoundary;
     Geometry problemGeometry() {
         Geometry geo(N, N, N);
         return geo;
     }
 
-    // Total number of time steps
     int totalSteps () {
         return 100000;
     }
-
-    // Output options
-    enum class OutputType { TSV, VTI, BOTH, NONE };
 
     OutputType outputType() {
         return OutputType::VTI;  
@@ -79,8 +76,6 @@ namespace user {
     int writeInterval() {
         return 10; 
     }
-
-    void print() {}
 }
 
 double energySpectrum_(double k, double kmin, double kmax, double A, int m)

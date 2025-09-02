@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 tau = 0.8
 L_phy = 1.0
 nu_phy = 1.0e-3
-Umax_phy = 0.005
+Umax_phy = 0.001
 
 N_list = [8, 16, 32, 64]
 errors = []
@@ -13,13 +13,13 @@ errors = []
 plt.figure(figsize=(10, 6))
 
 for N in N_list:
-    file = f"outputTSV/{N}.tsv"
+    file = f"halfway/{N}.tsv"
     df = pd.read_csv(file, sep=r"\s+")
     
     u_latt = df["vx"][1:-1].values
     
     nu_latt = (1/3)*(tau - 0.5)
-    h = L_phy / N 
+    h = L_phy / (N) 
     delta = nu_latt / nu_phy * h**2
     u_phy = u_latt * h / delta
     

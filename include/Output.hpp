@@ -10,6 +10,13 @@
 #include "vtkio/xmlvtk.h"
 
 /**
+ * @brief Enum representing the type of output formats supported.
+ * 
+ * TSV, TVI, BOTH, NONE
+ */
+enum class OutputType { TSV, VTI, BOTH, NONE };
+
+/**
  * @brief Writes the distribution function to a TSV (tab-separated values) file.
  *
  * @param f Constant reference to the vector storing the particle distribution function

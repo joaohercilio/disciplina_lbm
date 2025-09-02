@@ -2,6 +2,8 @@
 
 #include "lattice/LatticeModel.hpp"
 #include "Geometry.hpp"
+#include "Logger.hpp"
+#include "Streaming.hpp"
 
 #include <map>
 #include <string>
@@ -77,5 +79,6 @@ public:
                                         const ColParamMap& colParams,
                                         const std::vector<double>& u,
                                         const std::vector<double>& force,
-                                        const int numberOfIterations) = 0;
+                                        const int numberOfIterations,
+                                        Logger& logger) = 0;
 };

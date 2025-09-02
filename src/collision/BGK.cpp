@@ -29,10 +29,10 @@ void BGK::computeCollision(std::vector<double>& f,
     int numPoints = geometry.getNumOfPoints();
 
     #pragma omp parallel for
-    for (int i = 0; i < numPoints; ++i) {
-        if (geometry.getNode(i) == NodeType::Fluid) {
+    for (int id = 0; id < numPoints; ++id) {
+        if (geometry.getNode(id) == NodeType::Fluid) {
 
-            double* mapF = f.data() + i*numOfVel;
+            double* mapF = f.data() + id*numOfVel;
 
             double rho, vx, vy, vz;
             
@@ -61,6 +61,7 @@ void BGK::initializeDensityField(std::vector<double>& f,
                                 const ColParamMap& colParams,
                                 const std::vector<double>& u,
                                 const std::vector<double>& force,
-                                const int numberOfIterations)
+                                const int numberOfIterations,
+                                Logger& logger)
 {
 }

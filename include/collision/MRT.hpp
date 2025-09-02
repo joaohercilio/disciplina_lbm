@@ -50,5 +50,6 @@ public:
                                         const ColParamMap& colParams,
                                         const std::vector<double>& u,
                                         const std::vector<double>& force,
-                                        const int numberOfIterations) override;
+                                        const int numberOfIterations,
+                                        Logger& logger) override;
 };

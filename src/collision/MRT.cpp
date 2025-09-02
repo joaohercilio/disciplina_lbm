@@ -1,6 +1,4 @@
 #include "collision/MRT.hpp"
-#include <iostream>
-#include "Streaming.hpp"
 
 ColParamMap MRT::prepareColParams(const ColParamMap& raw) const {
     auto it = raw.find("tau");
@@ -55,10 +53,10 @@ void MRT::initializeDensityField(std::vector<double>& f,
                                 const ColParamMap& colParams,
                                 const std::vector<double>& u,
                                 const std::vector<double>& force,
-                                const int numberOfIterations)
+                                const int numberOfIterations,
+                                Logger& logger)
 {
-    int p = 0;
-    const char* dots[] = {".  ", ".. ", "..."};
+    logger.logMessage("\nPressure field initialization steps\n");
 
     int numOfPoints = geometry.getNumOfPoints();
     int nx = geometry.nx();
@@ -93,7 +91,7 @@ void MRT::initializeDensityField(std::vector<double>& f,
             {
                 m[i] = m[i] - s[i] * (m[i] - meq[i]);
             }
-            
+
             lattice.reconstructDistribution(mapF, m);
 
             varrho += fabs(drhoOld[id] - m[0]);
@@ -108,23 +106,27 @@ void MRT::initializeDensityField(std::vector<double>& f,
         {
             double* mapF = f.data() + id*numOfVel;
             double m[numOfVel];
+            double meq[numOfVel];
 
             lattice.computeMoments(mapF, m);
             
-            m[1] = u[geometry.getVelocityIndex(id, 0)] * m[0];
-            m[2] = u[geometry.getVelocityIndex(id, 1)] * m[0];
-            if(numOfDim == 3) { m[3] = u[geometry.getVelocityIndex(id, 2)] * m[0]; }
+            double rho = m[0];
+            double ux = u[geometry.getVelocityIndex(id, 0)];
+            double uy = u[geometry.getVelocityIndex(id, 1)];
+
+            meq[0] = rho;
+            meq[1] = rho * ux;	
+            meq[2] = rho * uy;
             
             lattice.reconstructDistribution(mapF, m);
         }
 
         Istep++;
-        if (Istep % 20 == 0) { std::cout << "\r\033[KInitalizing density field " << dots[p % 3] << std::flush; p++; }      
+
+        logger.logStep(Istep,numberOfIterations);
     } 
-    
-    if(Istep > 0) {
-    std::cout << "\r\033[KInitalizing density field... completed in "
-    << Istep << " iterations, "
-    << "final difference: " << varrho << std::endl;
-    }
+
+    logger.endLine();
+    logger.logMessage("Final difference: " + std::to_string(varrho) + "\n\n");
+
 }
