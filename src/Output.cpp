@@ -1,6 +1,6 @@
 #include "Output.hpp"
 
-void writeTSV(const std::vector<double>& f, const LatticeModel& lattice, const Geometry& geo, const std::string& path, int t) {
+void writeTSV(const std::vector<double>& f, const LatticeModel& lattice, const Geometry& geometry, const std::string& path, int t) {
     std::filesystem::create_directories(path);
     std::ofstream out(path + "/out_" + std::to_string(t) + ".tsv");
     
@@ -9,11 +9,11 @@ void writeTSV(const std::vector<double>& f, const LatticeModel& lattice, const G
     out << "x\ty\tz\tvx\tvy\tvz\trho\n";
     
     int numOfVel = lattice.getNumOfVel();
-    int n = geo.getNumOfPoints();
+    int n = geometry.getNumOfPoints();
     
     for (int id = 0; id < n; ++id) {
         int x, y, z;
-        geo.getCoords(id, x, y, z);
+        geometry.getCoords(id, x, y, z);
         const double* mapF = f.data() + id * numOfVel;
         double rho, vx, vy, vz;
         lattice.computeFields(mapF, rho, vx, vy, vz);
@@ -23,24 +23,24 @@ void writeTSV(const std::vector<double>& f, const LatticeModel& lattice, const G
     out.close();
 }
 
-void writeVTI(const std::vector<double>& f, const LatticeModel& lattice, const Geometry& geo, const std::string& path, int t) {
+void writeVTI(const std::vector<double>& f, const LatticeModel& lattice, const Geometry& geometry, const std::string& path, int t) {
     std::filesystem::create_directories(path);
 
     char filename[256];
     std::sprintf(filename, "%s/output_%07d.vti", path.c_str(), t);
 
-    int nx = geo.nx();
-    int ny = geo.ny();
-    int nz = geo.nz();
+    int nx = geometry.nx();
+    int ny = geometry.ny();
+    int nz = geometry.nz();
     int numOfVel = lattice.getNumOfVel();
-    int numOfPoints = geo.getNumOfPoints();
+    int numOfPoints = geometry.getNumOfPoints();
 
     std::vector<double> rho(numOfPoints, 0.0);
     std::vector<double> vel(3 * numOfPoints, 0.0);
 
     for (int id = 0; id < numOfPoints; ++id) {
         int x, y, z;
-        geo.getCoords(id, x, y, z);
+        geometry.getCoords(id, x, y, z);
 
         const double* mapF = f.data() + id * numOfVel;
         double vx, vy, vz, density;
@@ -63,4 +63,13 @@ void writeVTI(const std::vector<double>& f, const LatticeModel& lattice, const G
     vti.addPointData("Velocity", "Float64", "binary", 3, (unsigned char*) vel.data());
 
     vti.write();
+}
+
+void callOutput(const std::vector<double>& f, const LatticeModel& lattice, const Geometry& geometry, int t, OutputType outputType)
+{
+    if (outputType == OutputType::TSV || outputType == OutputType::BOTH)
+        writeTSV(f, lattice, geometry, "../outputTSV", t);
+
+    if (outputType == OutputType::VTI || outputType == OutputType::BOTH)
+        writeVTI(f, lattice, geometry, "../outputVTI", t);
 }

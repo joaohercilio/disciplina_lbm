@@ -7,13 +7,13 @@ L_phy = 1.0
 nu_phy = 1.0e-3
 Umax_phy = 0.001
 
-N_list = [8, 16, 32, 64]
+N_list = [8, 16, 32]
 errors = []
 
 plt.figure(figsize=(10, 6))
 
 for N in N_list:
-    file = f"halfway/{N}.tsv"
+    file = f"outputTSV/{N}.tsv"
     df = pd.read_csv(file, sep=r"\s+")
     
     u_latt = df["vx"][1:-1].values

@@ -39,5 +39,16 @@ void writeTSV(const std::vector<double>& f, const LatticeModel& lattice, const G
  * @param t Current timestep (used to name the file)
  */
 
-void writeVTI(const std::vector<double>& f, const LatticeModel& lattice, const Geometry& geo, const std::string& path, int t);
+void writeVTI(const std::vector<double>& f, const LatticeModel& lattice, const Geometry& geometry, const std::string& path, int t);
 
+/**
+ * @brief Calls writing functions for each format required by the user
+ *
+ * @param f Constant reference to the vector storing the particle distribution function
+ * @param lattice Constant reference to the lattice model
+ * @param geometry Constant reference to the geometry of the domain
+ * @param t Current timestep (used to name the file)
+ * @param outputType The output file format (TSV, VTI, BOTH)
+ */
+
+void callOutput(const std::vector<double>& f, const LatticeModel& lattice, const Geometry& geometry, int t, OutputType outputType);

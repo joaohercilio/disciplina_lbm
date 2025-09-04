@@ -4,39 +4,46 @@ void D2Q9::computeEquilibrium(double* feq, const double rho, const double vx, co
     
     double vx2 = vx*vx;
     double vy2 = vy*vy;
+    
     double rho0 = w_[0]*rho;
     double rho1 = w_[1]*rho;
     double rho2 = w_[5]*rho;
+
+    double drho  = rho - 1.0;
+    double drho0 = w_[0]*drho;
+    double drho1 = w_[1]*drho;
+    double drho2 = w_[5]*drho;
+
     double ax = 3.0 * vx;
     double ay = 3.0 * vy;
     double b1 =  3.0 * vx + 3.0 * vy;
     double b2 = -3.0 * vx + 3.0 * vy;
 
-    feq[0] = 1.0 - 1.5 * ( vx2 + vy2 );
+    feq[0] = - 1.5 * ( vx2 + vy2 );
 
     feq[1] = feq[0] + 4.5 * vx2;
-    feq[2] = rho1 * ( feq[1] - ax );
-    feq[1] = rho1 * ( feq[1] + ax );
+    feq[2] = rho1 * ( feq[1] - ax ) + drho1;
+    feq[1] = rho1 * ( feq[1] + ax ) + drho1;
 
     feq[3] = feq[0] + 4.5 * vy2;
-    feq[4] = rho1 * ( feq[3] - ay );
-    feq[3] = rho1 * ( feq[3] + ay );
+    feq[4] = rho1 * ( feq[3] - ay ) + drho1;
+    feq[3] = rho1 * ( feq[3] + ay ) + drho1;
     
     feq[5] = feq[0] + 0.5 * b1 * b1;
-    feq[6] = rho2 * ( feq[5] - b1 );
-    feq[5] = rho2 * ( feq[5] + b1 );
+    feq[6] = rho2 * ( feq[5] - b1 ) + drho2;
+    feq[5] = rho2 * ( feq[5] + b1 ) + drho2;
 
     feq[7] = feq[0] + 0.5 * b2 * b2;
-    feq[8] = rho2 * ( feq[7] - b2 );
-    feq[7] = rho2 * ( feq[7] + b2 );
+    feq[8] = rho2 * ( feq[7] - b2 ) + drho2;
+    feq[7] = rho2 * ( feq[7] + b2 ) + drho2;
 
-    feq[0] = rho0 * feq[0];
+    feq[0] = rho0 * feq[0] + drho0;
 }
 
 void D2Q9::computeFields(const double* f, double& rho, double& vx, double& vy, double& vz) const {
     
-    rho = f[0] + f[1] + f[2] + f[3] + f[4] + f[5] + f[6] + f[7] + f[8];
-
+    rho = 1.0 + f[0] + f[1] + f[2] + f[3] + f[4] + f[5] + f[6] + f[7] + f[8];
+    
     double mx =  f[1] - f[2] + f[5] - f[6] - f[7] + f[8];
     double my =  f[3] - f[4] + f[5] - f[6] + f[7] - f[8];
 
@@ -62,27 +69,27 @@ void D2Q9::computeMoments(const double* f, double* m) const {
 
 void D2Q9::computeEquilibriumMoments(double* meq, const double* m) const {
 
-    double rho = m[0];
+    double drho = m[0];
 
-    double ux = m[1] / rho;
-    double uy = m[2] / rho;
+    double jx = m[1];	
+    double jy = m[2];
     
-    double ux2 = ux * ux;
-    double uy2 = uy * uy;
+    double jx2 = jx*jx;
+    double jy2 = jy*jy;
 
-    meq[0] = rho;
+    meq[0] = drho;  // Mass density
 
-    meq[1] = rho * ux;	
-    meq[2] = rho * uy;
+    meq[1] = jx;	// Jx Momentum
+    meq[2] = jy;    // Jy Momentum
     
-    meq[3] = rho * ( 3*ux2 + 3*uy2 - 2); // e
-    meq[4] = rho * (-3*ux2 - 3*uy2 + 1); // epsilon
+    meq[3] = -2*drho + 3*(jx2 + jy2); // Kinetic energy
+    meq[4] =    drho - 3*(jx2 + jy2); // Squared Kinetic energy
 
-    meq[5] = -rho * ux;	//qx
-    meq[6] = -rho * uy;	//qy
+    meq[5] = -jx;	// qx Energy flux
+    meq[6] = -jy;	// qy Energy flux
 
-    meq[7] = rho * (ux2 - uy2); //pxx
-    meq[8] = rho *   ux*uy;		//pxy
+    meq[7] = jx2 - jy2; // pxx Viscous stress tensor
+    meq[8] = jx*jy;		// pxy Viscous stress tensor
 }
 
 void D2Q9::reconstructDistribution(double* f, const double* m) const {
@@ -98,9 +105,9 @@ void D2Q9::reconstructDistribution(double* f, const double* m) const {
     f[8] = (1.0/9.0)*m[0] + (1.0/6.0)*m[1] - 1.0/6.0*m[2] + (1.0/18.0)*m[3] + (1.0/36.0)*m[4] + (1.0/12.0)*m[5] - 1.0/12.0*m[6] - 1.0/4.0*m[8];
 }
 
-std::vector<double> D2Q9::relaxationMatrix(const double tau, const int numOfVel) const {
+std::vector<double> D2Q9::relaxationMatrix(const double tau) const {
 	
-	std::vector<double> s(numOfVel, 0.0);
+	std::vector<double> s(9, 0.0);
 	s[3] =  1.0; 	 //s_e
 	s[4] =  1.4;	 //s_epsilon
 	s[5] =  1.7;	 //s_q	

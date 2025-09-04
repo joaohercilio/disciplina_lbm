@@ -38,6 +38,6 @@ public:
     void reconstructDistribution(double* f, const double* m) const override;
 
     /// \copydoc LatticeModel::relaxationMatrix
-    std::vector<double> relaxationMatrix(const double tau, const int numOfVel) const override;
+    std::vector<double> relaxationMatrix(const double tau) const override;
 };
 

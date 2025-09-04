@@ -137,7 +137,7 @@ public:
      * @param numOfVel Number of discrete velocities
      * @return Vector containing the relaxation matrix
      */
-    virtual std::vector<double> relaxationMatrix(const double tau, const int numOfVel) const {
+    virtual std::vector<double> relaxationMatrix(const double tau) const {
         throw std::runtime_error("relaxationMatrix not implemented for this lattice");
     }
 };

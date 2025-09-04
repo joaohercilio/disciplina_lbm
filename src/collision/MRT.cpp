@@ -22,7 +22,7 @@ void MRT::computeCollision(std::vector<double>& f,
     int numPoints = geometry.getNumOfPoints();
 
     const double tau = colParams.find("tau") -> second;
-    std::vector<double> s = lattice.relaxationMatrix(tau, numOfVel);
+    std::vector<double> s = lattice.relaxationMatrix(tau);
 
     #pragma omp parallel for
     for (int id = 0; id < numPoints; ++id) {
@@ -66,7 +66,7 @@ void MRT::initializeDensityField(std::vector<double>& f,
     int numOfDim = lattice.getNumOfDim();
 
     const double tau = colParams.find("tau") -> second;
-    std::vector<double> s = lattice.relaxationMatrix(tau, numOfVel);
+    std::vector<double> s = lattice.relaxationMatrix(tau);
 
     std::vector<double> drhoOld(numOfPoints, 1.0);
 

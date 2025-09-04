@@ -12,7 +12,7 @@ namespace user {
         return {{"tau", tau}};
     }
 
-    const int N             = 64 + 2; // 2 solid nodes at the boundaries
+    const int N             = 32 + 2; // 2 solid nodes at the boundaries
     const int TPHY          = 10000;
     const double LPHY       = 1.0;
     const double UPHY       = 0.001;
@@ -31,14 +31,15 @@ namespace user {
     // User configuration summary
     inline std::vector<std::pair<std::string, double>> userLogParams() {
         return {
-            {"N", N},
+            {"N", N-2},
             {"Viscosity", NULATT},
             {"h", h},
             {"delta", delta},
             {"Umax", ULATT},
             {"F", FLATT},
             {"Re", RELATT},
-            {"Ma", ULATT/(1/sqrt(3))}
+            {"Ma", ULATT/(1/sqrt(3))},
+            {"Total steps", TLATT}
         };
     }    
     
@@ -70,7 +71,7 @@ namespace user {
     }
 
     int totalSteps () {
-        return 1000000;
+        return TLATT;
     }
 
     int writeInterval() {

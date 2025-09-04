@@ -72,13 +72,13 @@ public:
      * @brief Returns a constant reference to the lattice model.
      * @return Reference to the lattice model
      */
-    const LatticeModel& getLattice() const;
+    const LatticeModel& getLattice() const { return *lattice_; }
     
     /**
      * @brief Returns a constant reference to the geometry.
      * @return Reference to the geometry object
      */
-    const Geometry& getGeometry() const;
+    const Geometry& getGeometry() const { return geometry_; }
 
     /**
      * @brief Factory method to create a concrete simulation instance.

@@ -10,53 +10,48 @@ public:
 
     void run() override 
     {        
-        auto& f_in  = f1_;
-        auto& f_out = f2_;
+        const auto logParams = user::userLogParams();
+        const auto outputType = user::outputType();
+        const auto colParams = collision_ -> prepareColParams(user::colParams());
+        const auto externalForce = user::externalForce();
+        const auto initializePressureIterations = user::initializePressureIterations();
+        const auto totalSteps = user::totalSteps();
+        const auto writeInterval = user::writeInterval();
+        const auto u0 = user::initialVelocity(geometry_);
+        const auto rho0 = user::initialDensity(geometry_);
 
         Logger logger;
         Timer timer(logger);
 
-        auto logParams = user::userLogParams();
         logger.logUserConfig("USER CONFIGURATION SUMMARY", logParams);
 
-        auto outputType = user::outputType();
-
-        const auto colParams = collision_ -> prepareColParams(user::colParams());
+        auto& f_in  = f1_;
+        auto& f_out = f2_;
 
         timer.start("Initialization");
-        std::vector<double> u0 = user::initialVelocity(geometry_);
-        std::vector<double> rho0 = user::initialDensity(geometry_);
         initializeFields(f_in, *lattice_, geometry_, colParams, u0, rho0);
-        collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, user::externalForce(), user::initializePressureIterations(), logger);
+        collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, externalForce, initializePressureIterations, logger);
         timer.stop("Initialization");
+
+        callOutput(f_out, *lattice_, geometry_, 0 ,outputType);
 
         logger.logMessage("Time steps\n");
 
-        if (outputType == OutputType::TSV || outputType == OutputType::BOTH)
-            writeTSV(f_in, *lattice_, geometry_, "../outputTSV", 0);
-
-        if (outputType == OutputType::VTI || outputType == OutputType::BOTH)
-            writeVTI(f_in, *lattice_, geometry_, "../outputVTI", 0);
-
-        for (int t = 1; t <= user::totalSteps(); ++t) {
+        for (int t = 1; t <= totalSteps; ++t) {
 
             timer.start("Collision");
-            collision_->computeCollision(f_in, *lattice_, geometry_, colParams, user::externalForce());
+            collision_->computeCollision(f_in, *lattice_, geometry_, colParams, externalForce);
             timer.stop("Collision");
 
             timer.start("Streaming");
             performStreaming(f_in, f_out, *lattice_, geometry_);
             timer.stop("Streaming");
 
-            if (t % user::writeInterval() == 0) {
-                if (outputType == OutputType::TSV || outputType == OutputType::BOTH)
-                    writeTSV(f_out, *lattice_, geometry_, "../outputTSV", t);
-
-                if (outputType == OutputType::VTI || outputType == OutputType::BOTH)
-                    writeVTI(f_out, *lattice_, geometry_, "../outputVTI", t);
+            if (t % writeInterval == 0) {
+                callOutput(f_out, *lattice_, geometry_, t ,outputType);
             }
 
-            logger.logStep(t,user::totalSteps());
+            logger.logStep(t,totalSteps);
 
             std::swap(f_in, f_out);
         }
@@ -69,12 +64,4 @@ public:
 
 std::unique_ptr<Simulation> Simulation::create() {
     return std::make_unique<LBMSimulation>();
-}
-
-const LatticeModel& Simulation::getLattice() const {
-    return *lattice_;
-}
-
-const Geometry& Simulation::getGeometry() const {
-    return geometry_;
 }
