@@ -169,7 +169,9 @@ void D3Q19::reconstructDistribution(double* f, const double* m) const {
 std::vector<double> D3Q19::relaxationMatrix(const double tau) const {
 	
 	std::vector<double> s(19, 0.0);
-
+	s[1] =  1.0;
+	s[2] =  1.0;
+	s[3] =  1.0;
 	s[4] =  1.19;
 	s[5] =  1.4;
 	s[6] =  1.2;

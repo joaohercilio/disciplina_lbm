@@ -85,9 +85,19 @@ void MRT::initializeDensityField(std::vector<double>& f,
             double meq[numOfVel];
 
             lattice.computeMoments(mapF, m);
-            lattice.computeEquilibriumMoments(meq, m);
 
-            for (int i = 1 + numOfDim; i < numOfVel; i++) 
+            double ux = u[geometry.getVelocityIndex(id, 0)];
+            double uy = u[geometry.getVelocityIndex(id, 1)];
+            double uz = u[geometry.getVelocityIndex(id, 2)];
+
+            m[1] = ux;
+            m[2] = uy;
+            //m[3] = uz;
+
+            lattice.computeEquilibriumMoments(meq, m);
+            lattice.computeMoments(mapF, m);
+
+            for (int i = 1; i < numOfVel; i++) 
             {
                 m[i] = m[i] - s[i] * (m[i] - meq[i]);
             }
@@ -101,32 +111,27 @@ void MRT::initializeDensityField(std::vector<double>& f,
         performStreaming(f, fn, lattice, geometry);
         std::swap(f, fn);
         
-        #pragma omp parallel for
-        for (int id = 0; id < numOfPoints; id++)
-        {
-            double* mapF = f.data() + id*numOfVel;
-            double m[numOfVel];
-            double meq[numOfVel];
-
-            lattice.computeMoments(mapF, m);
-            
-            double rho = m[0];
-            double ux = u[geometry.getVelocityIndex(id, 0)];
-            double uy = u[geometry.getVelocityIndex(id, 1)];
-
-            meq[0] = rho;
-            meq[1] = rho * ux;	
-            meq[2] = rho * uy;
-            
-            lattice.reconstructDistribution(mapF, m);
-        }
-
         Istep++;
 
         logger.logStep(Istep,numberOfIterations);
     } 
 
+    #pragma omp parallel for
+    for (int id = 0; id < numOfPoints; id++)
+    {
+        double* mapF = f.data() + id*numOfVel;
+        double m[numOfVel];
+        double ux = u[geometry.getVelocityIndex(id, 0)];
+        double uy = u[geometry.getVelocityIndex(id, 1)];
+        double uz = u[geometry.getVelocityIndex(id, 2)];
+        lattice.computeMoments(mapF, m);
+        m[1] = (1.0 + m[0]) * ux;
+        m[2] = (1.0 + m[0]) * uy;
+        //m[3] = (1.0 + m[0]) * uz;
+        lattice.reconstructDistribution(mapF, m);
+    }
+
     logger.endLine();
-    logger.logMessage("Final difference: " + std::to_string(varrho) + "\n\n");
+    logger.logMessage("Final difference: " + logger.to_string(varrho) + "\n\n");
 
 }

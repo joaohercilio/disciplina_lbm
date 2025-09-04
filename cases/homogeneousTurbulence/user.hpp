@@ -13,12 +13,12 @@ void uHat(double kx, double ky, double kz, complex<double> vHat[3], double kmin,
 
 namespace user {
     
-    const int N = 128;
+    const int N = 32;
 
     using LatticeModel = D3Q19; 
 
     using CollisionModel = MRT;
-    double tau = 0.8;
+    double tau = 0.506;
     ColParamMap colParams() {
         return {{"tau", tau}};
     }
@@ -37,7 +37,7 @@ namespace user {
         double A = 1.4293e-4;
         double m = 4;
 
-        std::vector <double> u (3 * geo.getNumOfPoints());
+        std::vector <double> u (3 * geo.getNumOfPoints(), 0.0);
         
         initVelocity(u, geo, kmin, kmax, A, m);
         
@@ -53,7 +53,7 @@ namespace user {
     }
 
     int initializePressureIterations() {
-        return 5000;
+        return 1000;
     }
 
     std::vector<double> externalForce()
@@ -67,14 +67,14 @@ namespace user {
     }
 
     int totalSteps () {
-        return 100000;
+        return 10;
     }
 
     OutputType outputType() {
         return OutputType::VTI;  
     }
     int writeInterval() {
-        return 10; 
+        return 1; 
     }
 }
 

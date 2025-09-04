@@ -30,10 +30,11 @@ public:
 
         timer.start("Initialization");
         initializeFields(f_in, *lattice_, geometry_, colParams, u0, rho0);
+        if(initializePressureIterations > 0)
         collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, externalForce, initializePressureIterations, logger);
         timer.stop("Initialization");
 
-        callOutput(f_out, *lattice_, geometry_, 0 ,outputType);
+        callOutput(f_in, *lattice_, geometry_, 0 ,outputType);
 
         logger.logMessage("Time steps\n");
 

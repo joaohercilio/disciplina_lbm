@@ -23,6 +23,13 @@ void Logger::logMessage(const std::string& msg) {
     std::cout << msg << std::endl;
 }
 
+std::string Logger::to_string(double v) {
+    std::ostringstream oss;
+    oss.precision(17);   
+    oss << v;
+    return oss.str();
+}
+
 void Logger::endLine() {
     if(count_ % valuesPerLine_ != 0) {
         std::cout << std::endl;

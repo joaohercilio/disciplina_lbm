@@ -62,6 +62,7 @@ public:
                       
     void logUserConfig(const std::string& title,
                       const std::vector<std::pair<std::string, std::string>>& params);
+    static std::string to_string(double v);
 private:
     int valuesPerLine_;       ///< Number of values to print per line
     int count_;               ///< Counter for values in the current line
