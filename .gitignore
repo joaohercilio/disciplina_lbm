@@ -14,5 +14,6 @@ Makefile
 
 output/
 *.tsv
+*.vti
 
 !CMakeLists.txt
