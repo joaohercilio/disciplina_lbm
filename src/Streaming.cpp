@@ -1,6 +1,7 @@
 #include "Streaming.hpp"
+#include "Neighbors.hpp"
 
-void performStreaming(std::vector<double>& f, std::vector<double>& fn, const LatticeModel& lattice, const Geometry& geometry)
+void performStreaming(std::vector<double>& f, std::vector<double>& fn, const LatticeModel& lattice, const Geometry& geometry, const Neighbors& neighbors)
 {
     int numOfVel = lattice.getNumOfVel();
     
@@ -21,12 +22,8 @@ void performStreaming(std::vector<double>& f, std::vector<double>& fn, const Lat
             geometry.getCoords(id, x, y, z);
 
             for (int k = 0; k < numOfVel; k++) {
-                
-                int xn = (x + cx[k] + nx) % nx;
-                int yn = (y + cy[k] + ny) % ny;
-                int zn = (z + cz[k] + nz) % nz;
 
-                int idn = geometry.getIndex(xn, yn, zn);
+                int idn = neighbors(id, k, numOfVel);
                 
                 // Halfway bounce and back
                 if (geometry.getNode(idn) == NodeType::Solid) {

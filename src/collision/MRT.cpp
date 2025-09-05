@@ -53,6 +53,7 @@ void MRT::initializeDensityField(std::vector<double>& f,
                                 const ColParamMap& colParams,
                                 const std::vector<double>& u,
                                 const std::vector<double>& force,
+                                const Neighbors& neighbors,
                                 const int numberOfIterations,
                                 Logger& logger)
 {
@@ -81,10 +82,10 @@ void MRT::initializeDensityField(std::vector<double>& f,
         {
             double* mapF = f.data() + id*numOfVel;
 
-            double m[numOfVel];
-            double meq[numOfVel];
+            std::vector<double> m(numOfVel);
+            std::vector<double> meq(numOfVel);
 
-            lattice.computeMoments(mapF, m);
+            lattice.computeMoments(mapF, m.data());
 
             double ux = u[geometry.getVelocityIndex(id, 0)];
             double uy = u[geometry.getVelocityIndex(id, 1)];
@@ -94,21 +95,21 @@ void MRT::initializeDensityField(std::vector<double>& f,
             m[2] = uy;
             //m[3] = uz;
 
-            lattice.computeEquilibriumMoments(meq, m);
-            lattice.computeMoments(mapF, m);
+            lattice.computeEquilibriumMoments(meq.data(), m.data());
+            lattice.computeMoments(mapF, m.data());
 
             for (int i = 1; i < numOfVel; i++) 
             {
                 m[i] = m[i] - s[i] * (m[i] - meq[i]);
             }
 
-            lattice.reconstructDistribution(mapF, m);
+            lattice.reconstructDistribution(mapF, m.data());
 
             varrho += fabs(drhoOld[id] - m[0]);
             drhoOld[id] = m[0];
         }
 
-        performStreaming(f, fn, lattice, geometry);
+        performStreaming(f, fn, lattice, geometry, neighbors);
         std::swap(f, fn);
         
         Istep++;
@@ -120,15 +121,15 @@ void MRT::initializeDensityField(std::vector<double>& f,
     for (int id = 0; id < numOfPoints; id++)
     {
         double* mapF = f.data() + id*numOfVel;
-        double m[numOfVel];
+        std::vector<double> m(numOfVel);
         double ux = u[geometry.getVelocityIndex(id, 0)];
         double uy = u[geometry.getVelocityIndex(id, 1)];
         double uz = u[geometry.getVelocityIndex(id, 2)];
-        lattice.computeMoments(mapF, m);
+        lattice.computeMoments(mapF, m.data());
         m[1] = (1.0 + m[0]) * ux;
         m[2] = (1.0 + m[0]) * uy;
         //m[3] = (1.0 + m[0]) * uz;
-        lattice.reconstructDistribution(mapF, m);
+        lattice.reconstructDistribution(mapF, m.data());
     }
 
     logger.endLine();

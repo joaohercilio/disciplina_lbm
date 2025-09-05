@@ -20,6 +20,7 @@ public:
         const auto u0 = user::initialVelocity(geometry_);
         const auto rho0 = user::initialDensity(geometry_);
 
+
         Logger logger;
         Timer timer(logger);
 
@@ -30,8 +31,9 @@ public:
 
         timer.start("Initialization");
         initializeFields(f_in, *lattice_, geometry_, colParams, u0, rho0);
+        Neighbors neighbors(geometry_, *lattice_);
         if(initializePressureIterations > 0)
-        collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, externalForce, initializePressureIterations, logger);
+        collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, externalForce, neighbors, initializePressureIterations, logger);
         timer.stop("Initialization");
 
         callOutput(f_in, *lattice_, geometry_, 0 ,outputType);
@@ -45,7 +47,7 @@ public:
             timer.stop("Collision");
 
             timer.start("Streaming");
-            performStreaming(f_in, f_out, *lattice_, geometry_);
+            performStreaming(f_in, f_out, *lattice_, geometry_, neighbors);
             timer.stop("Streaming");
 
             if (t % writeInterval == 0) {

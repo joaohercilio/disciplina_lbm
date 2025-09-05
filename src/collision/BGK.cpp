@@ -38,13 +38,13 @@ void BGK::computeCollision(std::vector<double>& f,
             
             lattice.computeFields( mapF, rho, vx, vy, vz );
 
-            double feq[numOfVel];
+            std::vector<double> feq(numOfVel);
 
             vx += tau*force[0] ;
             vy += tau*force[1] ;
             vz += tau*force[2] ;
 
-            lattice.computeEquilibrium( feq, rho, vx, vy, vz );
+            lattice.computeEquilibrium( feq.data(), rho, vx, vy, vz );
 
             for (int k = 0; k < numOfVel; k++) 
             {
@@ -61,6 +61,7 @@ void BGK::initializeDensityField(std::vector<double>& f,
                                 const ColParamMap& colParams,
                                 const std::vector<double>& u,
                                 const std::vector<double>& force,
+                                const Neighbors& neighbors,
                                 const int numberOfIterations,
                                 Logger& logger)
 {

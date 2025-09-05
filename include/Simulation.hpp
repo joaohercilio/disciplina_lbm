@@ -11,6 +11,7 @@
 #include "Geometry.hpp"
 #include "Initialization.hpp"
 #include "Streaming.hpp"
+#include "Neighbors.hpp"
 #include "Output.hpp"
 #include "Timer.hpp"
 #include "Logger.hpp"

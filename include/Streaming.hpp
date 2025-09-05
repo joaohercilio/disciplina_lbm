@@ -5,6 +5,7 @@
 
 #include "lattice/LatticeModel.hpp"
 #include "Geometry.hpp"
+#include "Neighbors.hpp"
 
 /**
  * @brief Performs the streaming step of the LBM.
@@ -18,5 +19,5 @@
  * @param lattice Constant reference to the lattice model
  * @param geometry Constant reference to the geometry
  */
-void performStreaming(std::vector<double>& f, std::vector<double>& fn, const LatticeModel& lattice, const Geometry& geometry);
+void performStreaming(std::vector<double>& f, std::vector<double>& fn, const LatticeModel& lattice, const Geometry& geometry, const Neighbors& neighbors);
 
