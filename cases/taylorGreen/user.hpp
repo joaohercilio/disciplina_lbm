@@ -86,14 +86,14 @@ namespace user {
 
                 double p = -0.5 * U0*U0 * cos( kx*(xi + yi) ) * cos( kx*(xi - yi) );
 
-                //rho[id] = 1.0 + 3.0 * p;
+                rho[id] = 1.0 + 3.0 * p;
             }
         }
         return rho;
     }
 
     int initializePressureIterations() {
-        return 1000;
+        return 0;
     }
 
     std::vector<double> externalForce()
