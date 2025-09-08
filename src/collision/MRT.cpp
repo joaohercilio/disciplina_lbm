@@ -60,9 +60,6 @@ void MRT::initializeDensityField(std::vector<double>& f,
     logger.logMessage("\nPressure field initialization steps\n");
 
     int numOfPoints = geometry.getNumOfPoints();
-    int nx = geometry.nx();
-    int ny = geometry.ny();
-    int nz = geometry.nz();
     int numOfVel = lattice.getNumOfVel();
     int numOfDim = lattice.getNumOfDim();
 

@@ -65,4 +65,72 @@ void BGK::initializeDensityField(std::vector<double>& f,
                                 const int numberOfIterations,
                                 Logger& logger)
 {
+    logger.logMessage("\nPressure field initialization steps\n");
+
+    int numOfPoints = geometry.getNumOfPoints();
+    int numOfVel = lattice.getNumOfVel();
+    int numOfDim = lattice.getNumOfDim();
+
+    const double alphaEq    = colParams.find("alphaEq") -> second;
+    const double alphaNonEq = colParams.find("alphaNonEq") -> second;
+
+    std::vector<double> drhoOld(numOfPoints, 1.0);
+
+    int Istep = 0;
+
+    double varrho;
+    while (Istep < numberOfIterations) {
+        varrho = 0.0;
+
+        #pragma omp parallel for reduction(+:varrho)
+        for (int id = 0; id < numOfPoints; id++)
+        {
+            double* mapF = f.data() + id*numOfVel;
+
+            double rho, vx, vy, vz;
+            
+            lattice.computeFields( mapF, rho, vx, vy, vz );
+
+            std::vector<double> feq(numOfVel);
+
+            double ux = u[geometry.getVelocityIndex(id, 0)];
+            double uy = u[geometry.getVelocityIndex(id, 1)];
+            double uz = u[geometry.getVelocityIndex(id, 2)];
+
+            lattice.computeEquilibrium( feq.data(), rho, ux, uy, uz );
+
+            for (int k = 0; k < numOfVel; k++) 
+            {
+                mapF[k] = alphaNonEq * mapF[k] + alphaEq * feq[k];
+            }
+
+            varrho += fabs(drhoOld[id] - rho);
+            drhoOld[id] = rho;
+        }
+
+        performStreaming(f, fn, lattice, geometry, neighbors);
+        std::swap(f, fn);
+        
+        Istep++;
+
+        logger.logStep(Istep,numberOfIterations);
+    } 
+
+    #pragma omp parallel for
+    for (int id = 0; id < numOfPoints; id++)
+    {
+        double* mapF = f.data() + id*numOfVel;
+        std::vector<double> m(numOfVel);
+        double ux = u[geometry.getVelocityIndex(id, 0)];
+        double uy = u[geometry.getVelocityIndex(id, 1)];
+        double uz = u[geometry.getVelocityIndex(id, 2)];
+        lattice.computeMoments(mapF, m.data());
+        m[1] = (1.0 + m[0]) * ux;
+        m[2] = (1.0 + m[0]) * uy;
+        if (numOfDim == 3) m[3] = (1.0 + m[0]) * uz;
+        lattice.reconstructDistribution(mapF, m.data());
+    }
+
+    logger.endLine();
+    logger.logMessage("Final difference: " + logger.to_string(varrho) + "\n\n");
 }
