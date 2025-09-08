@@ -93,7 +93,7 @@ void MRT::initializeDensityField(std::vector<double>& f,
 
             m[1] = ux;
             m[2] = uy;
-            //m[3] = uz;
+            if (numOfDim == 3) m[3] = uz;
 
             lattice.computeEquilibriumMoments(meq.data(), m.data());
             lattice.computeMoments(mapF, m.data());
@@ -128,7 +128,7 @@ void MRT::initializeDensityField(std::vector<double>& f,
         lattice.computeMoments(mapF, m.data());
         m[1] = (1.0 + m[0]) * ux;
         m[2] = (1.0 + m[0]) * uy;
-        //m[3] = (1.0 + m[0]) * uz;
+        if (numOfDim == 3) m[3] = (1.0 + m[0]) * uz;
         lattice.reconstructDistribution(mapF, m.data());
     }
 
