@@ -1,16 +1,15 @@
 #include "lattice/D3Q19.hpp"
 
-void D3Q19::computeEquilibrium(double* feq, const double rho, const double vx, const double vy, const double vz) const {
+void D3Q19::computeEquilibrium(double* feq, const double drho, const double vx, const double vy, const double vz) const {
     
     double vx2 = vx*vx;
     double vy2 = vy*vy;
     double vz2 = vz*vz;
 
-    double rho0 = w_[0]*rho;
-    double rho1 = w_[1]*rho;
-    double rho2 = w_[7]*rho;
+    double rho0 = w_[0]*(1.0 + drho);
+    double rho1 = w_[1]*(1.0 + drho);
+    double rho2 = w_[7]*(1.0 + drho);
 
-	double drho  = rho - 1.0;
     double drho0 = w_[0]*drho;
     double drho1 = w_[1]*drho;
     double drho2 = w_[7]*drho;
@@ -66,15 +65,15 @@ void D3Q19::computeEquilibrium(double* feq, const double rho, const double vx, c
     feq[0] = rho0 * feq[0] + drho0;
 }
 
-void D3Q19::computeFields(const double* f, double& rho, double& vx, double& vy, double& vz) const {
+void D3Q19::computeFields(const double* f, double& drho, double& vx, double& vy, double& vz) const {
     
-    rho = 1.0 + f[0] + f[1] + f[2] + f[3] + f[4] + f[5] + f[6] + f[7] + f[8] + f[9] + f[10] + f[11] + f[12] + f[13] + f[14] + f[15] + f[16] + f[17] + f[18];
+    drho = f[0] + f[1] + f[2] + f[3] + f[4] + f[5] + f[6] + f[7] + f[8] + f[9] + f[10] + f[11] + f[12] + f[13] + f[14] + f[15] + f[16] + f[17] + f[18];
 
     double mx =  f[1] - f[2] + f[7] - f[8] + f[9] - f[10] + f[11] - f[12] + f[13] - f[14];
 	double my =  f[3] - f[4] + f[7] - f[8] - f[9] + f[10] - f[15] + f[16] - f[17] + f[18];
 	double mz =  f[5] - f[6] +f[11] -f[12]- f[13] + f[14] - f[15] + f[16] + f[17] - f[18];
     
-    double oneOverRho = 1.0 / rho;
+    double oneOverRho = 1.0 / (1.0 + drho);
 
     vx = mx * oneOverRho;
     vy = my * oneOverRho;
@@ -169,24 +168,24 @@ void D3Q19::reconstructDistribution(double* f, const double* m) const {
 std::vector<double> D3Q19::relaxationMatrix(const double tau) const {
 	
 	std::vector<double> s(19, 0.0);
-	s[1] =  1.0;
-	s[2] =  1.0;
-	s[3] =  1.0;
-	s[4] =  1.19;
-	s[5] =  1.4;
-	s[6] =  1.2;
-	s[7] =  1.2;
-	s[8] =  1.2;
-	s[9] =  1./tau;
-	s[10] = 1.4;
-	s[11] = 1./tau;
-	s[12] = 1.4;
-	s[13] = 1./tau;
-	s[14] = 1./tau;
-	s[15] = 1./tau;
-	s[16] = 1.98;
-	s[17] = 1.98;
-	s[18] = 1.98;
+	s[1] =  0.0;	// S_X
+	s[2] =  0.0;	// S_X
+	s[3] =  0.0;	// S_X
+	s[4] =  1.19;	// S_e
+	s[5] =  1.4;	// S_epsilon
+	s[6] =  1.2;	// S_q 
+	s[7] =  1.2;	// S_q
+	s[8] =  1.2;	// S_q
+	s[9] =  1./tau;	// S_nu
+	s[10] = 1.4;	// S_pi
+	s[11] = 1./tau;	// S_nu
+	s[12] = 1.4;	// S_pi
+	s[13] = 1./tau;	// S_nu
+	s[14] = 1./tau; // S_nu
+	s[15] = 1./tau; // S_nu
+	s[16] = 1.98;	// S_m
+	s[17] = 1.98;	// S_m
+	s[18] = 1.98;	// S_m
 	
 	return s;
 

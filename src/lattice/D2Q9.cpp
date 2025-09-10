@@ -1,21 +1,20 @@
 #include "lattice/D2Q9.hpp"
 
-void D2Q9::computeEquilibrium(double* feq, const double rho, const double vx, const double vy, const double vz) const {
+void D2Q9::computeEquilibrium(double* feq, const double drho, const double vx, const double vy, const double vz) const {
     
     double vx2 = vx*vx;
     double vy2 = vy*vy;
     
-    double rho0 = w_[0]*rho;
-    double rho1 = w_[1]*rho;
-    double rho2 = w_[5]*rho;
+    double rho0 = w_[0]*(1.0 + drho);
+    double rho1 = w_[1]*(1.0 + drho);
+    double rho2 = w_[5]*(1.0 + drho);
 
-    double drho  = rho - 1.0;
     double drho0 = w_[0]*drho;
     double drho1 = w_[1]*drho;
     double drho2 = w_[5]*drho;
 
-    double ax = 3.0 * vx;
-    double ay = 3.0 * vy;
+    double ax =  3.0 * vx;
+    double ay =  3.0 * vy;
     double b1 =  3.0 * vx + 3.0 * vy;
     double b2 = -3.0 * vx + 3.0 * vy;
 
@@ -40,14 +39,14 @@ void D2Q9::computeEquilibrium(double* feq, const double rho, const double vx, co
     feq[0] = rho0 * feq[0] + drho0;
 }
 
-void D2Q9::computeFields(const double* f, double& rho, double& vx, double& vy, double& vz) const {
+void D2Q9::computeFields(const double* f, double& drho, double& vx, double& vy, double& vz) const {
     
-    rho = 1.0 + f[0] + f[1] + f[2] + f[3] + f[4] + f[5] + f[6] + f[7] + f[8];
+    drho = f[0] + f[1] + f[2] + f[3] + f[4] + f[5] + f[6] + f[7] + f[8];
     
     double mx =  f[1] - f[2] + f[5] - f[6] - f[7] + f[8];
     double my =  f[3] - f[4] + f[5] - f[6] + f[7] - f[8];
 
-    double oneOverRho = 1.0 / rho;
+    double oneOverRho = 1.0 / (1.0 + drho);
 
     vx = mx * oneOverRho;
     vy = my * oneOverRho;

@@ -66,7 +66,7 @@ void MRT::initializeDensityField(std::vector<double>& f,
     const double tau = colParams.find("tau") -> second;
     std::vector<double> s = lattice.relaxationMatrix(tau);
 
-    std::vector<double> drhoOld(numOfPoints, 1.0);
+    std::vector<double> drhoOld(numOfPoints, 0.0);
 
     int Istep = 0;
 

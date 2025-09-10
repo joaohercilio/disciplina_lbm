@@ -8,7 +8,7 @@ L = 1
 kL = 2 * np.pi / L
 U0 = 0.05
 nu = 0.002
-N = 32
+N = 64
 
 def processVTI(directory, P2_list, K_list):
     vti_files = sorted([f for f in os.listdir(directory) if f.endswith(".vti")])
@@ -21,7 +21,7 @@ def processVTI(directory, P2_list, K_list):
         vel = vtk_to_numpy(data.GetPointData().GetArray("Velocity")) # shape = (Npoints, 3)
         density = vtk_to_numpy(data.GetPointData().GetArray('Density'))
                 
-        pressure = (density - 1.0) / 3.0 
+        pressure = density / 3.0 
         integrand_sum_pressure = 0.0
         integrand_sum_energy = 0.0
 
@@ -49,14 +49,14 @@ K_iterated = []
 K_constant = []
 K_analytic = []
 
-processVTI("iterated/", P2_iterated, K_iterated)
+#processVTI("iterated/", P2_iterated, K_iterated)
 processVTI("constant/", P2_constant, K_constant)
 processVTI("analytic/", P2_analytic, K_analytic)
 
-time = np.linspace(0,200, len(P2_iterated))
+time = np.linspace(0,200, len(P2_constant))
 
 plt.figure(figsize=(6,6))
-plt.plot(time, P2_iterated/P2_analytic[0], label = "iterated")
+#plt.plot(time, P2_iterated/P2_analytic[0], label = "iterated")
 plt.plot(time, P2_constant/P2_analytic[0], label = "constant")
 plt.plot(time, P2_analytic/P2_analytic[0], label = "analytic")
 plt.xlim(0,200)
@@ -70,11 +70,11 @@ plt.legend()
 plt.show()
 
 plt.figure(figsize=(6,6))
-plt.plot(time, K_iterated/K_analytic[0], label = "iterated")
+#plt.plot(time, K_iterated/K_analytic[0], label = "iterated")
 plt.plot(time, K_constant/K_analytic[0], label = "constant")
 plt.plot(time, K_analytic/K_analytic[0], label = "analytic")
-plt.xlim(0,60)
-plt.ylim(0.966,1)
+plt.xlim(0,150)
+plt.ylim(0.984,1)
 plt.grid()
 textstr = f'N = {N}\nnu = {nu}'
 props = dict(boxstyle='round', facecolor='wheat', alpha=0.8)

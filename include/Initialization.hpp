@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <fftw3.h>
 
 #include "collision/BGK.hpp"
 #include "collision/MRT.hpp"
@@ -23,3 +24,9 @@ void initializeFields(std::vector<double>& f,
                             const ColParamMap& colParams,
                             const std::vector<double>& u,
                             const std::vector<double>& rho);
+
+void computeNonEquilibriumMoments(std::vector<double>& f, 
+                const LatticeModel& lattice, 
+                const Geometry& geometry,
+                const ColParamMap& colParams,
+                const std::vector<double>& u0);
