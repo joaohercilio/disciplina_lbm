@@ -52,7 +52,6 @@ void MRT::initializeDensityField(std::vector<double>& f,
                                 const Geometry& geometry,
                                 const ColParamMap& colParams,
                                 const std::vector<double>& u,
-                                const std::vector<double>& force,
                                 const Neighbors& neighbors,
                                 const int numberOfIterations,
                                 Logger& logger)
@@ -114,6 +113,10 @@ void MRT::initializeDensityField(std::vector<double>& f,
         logger.logStep(Istep,numberOfIterations);
     } 
 
+    logger.endLine();
+    logger.logMessage("Final difference: " + logger.to_string(varrho) + "\n\n");
+
+    /*
     #pragma omp parallel for
     for (int id = 0; id < numOfPoints; id++)
     {
@@ -127,9 +130,6 @@ void MRT::initializeDensityField(std::vector<double>& f,
         m[2] = (1.0 + m[0]) * uy;
         if (numOfDim == 3) m[3] = (1.0 + m[0]) * uz;
         lattice.reconstructDistribution(mapF, m.data());
-    }
-
-    logger.endLine();
-    logger.logMessage("Final difference: " + logger.to_string(varrho) + "\n\n");
-
+    } 
+    */   
 }

@@ -79,7 +79,6 @@ public:
                                         const Geometry& geometry,
                                         const ColParamMap& colParams,
                                         const std::vector<double>& u,
-                                        const std::vector<double>& force,
                                         const Neighbors& neighbors,
                                         const int numberOfIterations,
                                         Logger& logger) = 0;

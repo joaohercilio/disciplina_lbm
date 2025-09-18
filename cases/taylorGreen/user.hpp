@@ -10,7 +10,7 @@ namespace user {
 
     using LatticeModel = D2Q9; 
 
-    using CollisionModel = MRT;
+    using CollisionModel = BGK;
     double tau = 0.506;
     ColParamMap colParams() {
         return {{"tau", tau}};
@@ -49,7 +49,6 @@ namespace user {
 
                 double vx  = -sqrt(kx/ky) * U0 * cos(kx * xi) * sin(ky * yi);
                 double vy  =  sqrt(kx/ky) * U0 * sin(kx * xi) * cos(ky * yi);
-                double p = -0.25 * U0*U0 * ( (ky/kx)*cos(2*kx*xi) + (kx/ky)*cos(2*ky*yi) );
                 
                 u[geo.getVelocityIndex(id, 0)] = vx;
                 u[geo.getVelocityIndex(id, 1)] = vy;
@@ -62,7 +61,7 @@ namespace user {
 
     std::vector<double> initialDensity (const Geometry& geo) {
 
-        std::vector <double> rho (geo.getNumOfPoints(), 1.0);
+        std::vector <double> rho (geo.getNumOfPoints(), 0.0);
 
         double Lx = 1.0;
         double Ly = 1.0;
@@ -86,7 +85,7 @@ namespace user {
 
                 double p = -0.5 * U0*U0 * cos( kx*(xi + yi) ) * cos( kx*(xi - yi) );
 
-                rho[id] = 1.0 + 3.0 * p;
+                //rho[id] = 3.0 * p;
             }
         }
         return rho;
@@ -107,11 +106,11 @@ namespace user {
     }
 
     int totalSteps () {
-        return 200;
+        return 1;
     }
 
     OutputType outputType() {
-        return OutputType::VTI;  
+        return OutputType::BOTH;  
     }
     
     int writeInterval() {

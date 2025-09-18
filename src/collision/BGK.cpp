@@ -38,7 +38,7 @@ void BGK::computeCollision(std::vector<double>& f,
             
             lattice.computeFields( mapF, drho, vx, vy, vz );
 
-            std::vector<double> feq(numOfVel);
+            std::vector<double> feq(numOfVel, 0.0);
 
             vx += tau*force[0] ;
             vy += tau*force[1] ;
@@ -59,8 +59,7 @@ void BGK::initializeDensityField(std::vector<double>& f,
                                 const LatticeModel& lattice,
                                 const Geometry& geometry,
                                 const ColParamMap& colParams,
-                                const std::vector<double>& u,
-                                const std::vector<double>& force,
+                                const std::vector<double>& u0,
                                 const Neighbors& neighbors,
                                 const int numberOfIterations,
                                 Logger& logger)
@@ -87,25 +86,25 @@ void BGK::initializeDensityField(std::vector<double>& f,
         {
             double* mapF = f.data() + id*numOfVel;
 
-            double rho, vx, vy, vz;
+            double drho, vx, vy, vz;
             
-            lattice.computeFields( mapF, rho, vx, vy, vz );
+            lattice.computeFields( mapF, drho, vx, vy, vz );
 
-            std::vector<double> feq(numOfVel);
+            std::vector<double> feq(numOfVel, 0.0);
 
-            double ux = u[geometry.getVelocityIndex(id, 0)];
-            double uy = u[geometry.getVelocityIndex(id, 1)];
-            double uz = u[geometry.getVelocityIndex(id, 2)];
+            double ux = u0[geometry.getVelocityIndex(id, 0)];
+            double uy = u0[geometry.getVelocityIndex(id, 1)];
+            double uz = u0[geometry.getVelocityIndex(id, 2)];
 
-            lattice.computeEquilibrium( feq.data(), rho, ux, uy, uz );
+            lattice.computeEquilibrium( feq.data(), drho, ux, uy, uz );
 
             for (int k = 0; k < numOfVel; k++) 
             {
                 mapF[k] = alphaNonEq * mapF[k] + alphaEq * feq[k];
             }
 
-            varrho += fabs(drhoOld[id] - rho);
-            drhoOld[id] = rho;
+            varrho += fabs(drhoOld[id] - drho);
+            drhoOld[id] = drho;
         }
 
         performStreaming(f, fn, lattice, geometry, neighbors);
@@ -115,7 +114,7 @@ void BGK::initializeDensityField(std::vector<double>& f,
 
         logger.logStep(Istep,numberOfIterations);
     } 
-
+/*
     #pragma omp parallel for
     for (int id = 0; id < numOfPoints; id++)
     {
@@ -130,7 +129,7 @@ void BGK::initializeDensityField(std::vector<double>& f,
         if (numOfDim == 3) m[3] = (1.0 + m[0]) * uz;
         lattice.reconstructDistribution(mapF, m.data());
     }
-
+*/
     logger.endLine();
     logger.logMessage("Final difference: " + logger.to_string(varrho) + "\n\n");
 }

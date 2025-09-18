@@ -51,7 +51,9 @@ void computeNonEquilibriumMoments(std::vector<double>& f,
     int numOfVel = lattice.getNumOfVel();
     int nx = geometry.nx();
     int ny = geometry.ny();
-    
+    double Lx = 1.0;
+    double Ly = 1.0;
+
     std::vector<double> jx(numOfPoints, 0.0);
     std::vector<double> jy(numOfPoints, 0.0);
     std::vector<double> dxjx(numOfPoints, 0.0);
@@ -79,10 +81,10 @@ void computeNonEquilibriumMoments(std::vector<double>& f,
     for (int y = 0; y < ny; y++) {
         for (int x = 0; x < nx/2 + 1; x++) {
             int idx = y * (nx/2 + 1) + x;
-            
-            double kx = (x < nx/2) ? x : x - nx;
-            double ky = (y < ny/2) ? y : y - ny;
-            
+
+            double kx = 2.0*M_PI/Lx*((x < nx/2) ? x : x - nx);
+            double ky = 2.0*M_PI/Ly*((y < ny/2) ? y : y - ny);
+
             double re_x = JX[idx][0];
             double im_x = JX[idx][1];
 
@@ -111,8 +113,8 @@ void computeNonEquilibriumMoments(std::vector<double>& f,
 
     for(int id = 0; id < numOfPoints; id++) {
         pxx[id] = -2.0 / (3.0 * Snu) * (dxjx[id] - dxjy[id]);
-        pxy[id] = -1.0 / (3.0 * Snu) * (dxjx[id] + dxjy[id]);
-        e[id] = -1.0 * (dxjx[id] + dxjy[id]); // Se = 1.0
+        //pxy[id] = -1.0 / (3.0 * Snu) * (dxjx[id] + dxjy[id]);
+        //e[id] = -1.0 * (dxjx[id] + dxjy[id]); // Se = 1.0
     }
 
     fftw_destroy_plan(planX_forward);
@@ -129,10 +131,16 @@ void computeNonEquilibriumMoments(std::vector<double>& f,
 
         lattice.computeMoments(mapF, m.data());
 
-        m[3] += e[id];
         m[7] += pxx[id];  
-        m[8] += pxy[id];
 
         lattice.reconstructDistribution(mapF, m.data());
+    }
+
+    Logger logger;
+
+    for (int x = 0; x < geometry.nx(); x++) {
+        for (int y = 0; y < geometry.ny(); y++) {
+            //logger.logMessage(logger.to_string(pxx[geometry.getIndex(x,y,0)]));        
+        }
     }
 }

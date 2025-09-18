@@ -25,8 +25,14 @@ void Logger::logMessage(const std::string& msg) {
 
 std::string Logger::to_string(double v) {
     std::ostringstream oss;
-    oss.precision(17);   
-    oss << v;
+    oss.precision(17);
+
+    if (std::abs(v) < 1e-2 && v != 0.0) {
+        oss << std::scientific << v;
+    } else {
+        oss << std::fixed << v;
+    }
+
     return oss.str();
 }
 

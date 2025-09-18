@@ -30,10 +30,10 @@ public:
 
         timer.start("Initialization");
         initializeFields(f_in, *lattice_, geometry_, colParams, u0, rho0);
-        computeNonEquilibriumMoments(f_in, *lattice_, geometry_, colParams, u0);
         Neighbors neighbors(geometry_, *lattice_);
-        //if(initializePressureIterations > 0)
-        //collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, externalForce, neighbors, initializePressureIterations, logger);
+        //computeNonEquilibriumMoments(f_in, *lattice_, geometry_, colParams, u0);
+        if(initializePressureIterations > 0)
+            collision_->initializeDensityField(f_in, f_out, *lattice_, geometry_, colParams, u0, neighbors, initializePressureIterations, logger);
         timer.stop("Initialization");
 
         callOutput(f_in, *lattice_, geometry_, 0 ,outputType);
